@@ -1,3 +1,5 @@
+// TODO Fix callback hell with Q promise library.
+
 var mongoose = require('mongoose');
 var uniqueValidator = require('../index.js');
 
