@@ -4,7 +4,7 @@
     "description": "Mongoose Unique Validator is a schema plugin which adds pre-save validation for unique fields within the schema.",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "./node_modules/.bin/jasmine-node spec/ --forceexit --captureExceptions"
     },
     "keywords": [
         "mongoose",
@@ -15,5 +15,9 @@
     "license": "BSD",
     "dependencies": {
         "underscore": "1.5.1"
+    },
+    "devDependencies": {
+        "jasmine-node": "1.10.2",
+        "mongoose": "3.6.14"
     }
 }
