@@ -1,7 +1,7 @@
 {
     "name": "mongoose-unique-validator",
-    "version": "0.0.0",
-    "description": "Mongoose Unique Validator is a schema plugin which adds pre-save validation for unique fields within the schema.",
+    "version": "0.1.0",
+    "description": "Mongoose Unique Validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.",
     "main": "index.js",
     "scripts": {
         "test": "./node_modules/.bin/jasmine-node spec/ --forceexit --captureExceptions"
@@ -11,8 +11,16 @@
         "unique",
         "validator"
     ],
-    "author": "Blake Haswell",
-    "license": "BSD",
+    "author": {
+        "name": "Blake Haswell",
+        "email": "haswell00@gmail.com",
+        "url": "http://blakehaswell.com/"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/blakehaswell/mongoose-unique-validator.git"
+    },
     "dependencies": {
         "underscore": "1.5.1"
     },
