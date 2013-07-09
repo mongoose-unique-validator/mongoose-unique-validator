@@ -1,16 +1,16 @@
 {
-  "name": "mongoose-unique-validator",
-  "version": "0.0.0",
-  "description": "Mongoose Unique Validator is a schema plugin which adds pre-save validation for unique fields within the schema.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "mongoose",
-    "unique",
-    "validator"
-  ],
-  "author": "Blake Haswell",
-  "license": "BSD"
+    "name": "mongoose-unique-validator",
+    "version": "0.0.0",
+    "description": "Mongoose Unique Validator is a schema plugin which adds pre-save validation for unique fields within the schema.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "mongoose",
+        "unique",
+        "validator"
+    ],
+    "author": "Blake Haswell",
+    "license": "BSD"
 }
