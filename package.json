@@ -12,5 +12,8 @@
         "validator"
     ],
     "author": "Blake Haswell",
-    "license": "BSD"
+    "license": "BSD",
+    "dependencies": {
+        "underscore": "1.5.1"
+    }
 }
