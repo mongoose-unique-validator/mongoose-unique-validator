@@ -1,7 +1,7 @@
 {
     "name": "mongoose-unique-validator",
     "version": "0.1.0",
-    "description": "Mongoose Unique Validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.",
+    "description": "mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.",
     "main": "index.js",
     "scripts": {
         "test": "./node_modules/.bin/jasmine-node spec/ --forceexit --captureExceptions"
