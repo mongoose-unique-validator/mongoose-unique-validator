@@ -5,7 +5,7 @@ module.exports = function (schema, options) {
     _.each(schema.paths, function (schemaType, path) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path, mongoose);
-            schemaType.validate(validator, 'duplicate');
+            schemaType.validate(validator, 'unique');
         }
     });
 };
