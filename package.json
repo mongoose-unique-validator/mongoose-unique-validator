@@ -21,9 +21,6 @@
         "type": "git",
         "url": "https://github.com/blakehaswell/mongoose-unique-validator.git"
     },
-    "dependencies": {
-        "underscore": "1.5.1"
-    },
     "devDependencies": {
         "jasmine-node": "1.10.2",
         "mongoose": "3.6.x"
