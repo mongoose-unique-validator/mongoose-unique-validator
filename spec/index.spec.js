@@ -87,6 +87,29 @@ describe('Mongoose Unique Validator Plugin', function () {
         });
     });
 
+    describe('when a unique record exists in the DB', function () {
+
+        it('can be saved even if validation is triggered on a field with a unique index', function (done) {
+            var user = getUniqueUser();
+
+            user.save(function () {
+
+                // Changing a field and then changing it back to what it was seems to change an internal Mongoose flag
+                // and causes validation to occur even though the value of the field hasn’t changed.
+                user.email = 'robert.miller@gmail.com';
+                user.email = 'bob@robertmiller.com';
+
+                user.save(function (err) {
+                    user.remove(function () {
+                        expect(err).toBeNull();
+                        done();
+                    });
+                });
+            });
+        });
+
+    });
+
 });
 
 function getDuplicateUser() {
