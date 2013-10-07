@@ -1,8 +1,6 @@
-var _ = require('underscore');
-
 module.exports = function (schema, options) {
     var mongoose = options.mongoose;
-    _.each(schema.paths, function (schemaType, path) {
+    schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path, mongoose);
             schemaType.validate(validator, 'unique');
