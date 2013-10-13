@@ -1,9 +1,10 @@
 module.exports = function (schema, options) {
     var mongoose = options.mongoose;
+    var message = options.message || 'Problem: {} already exists';
     schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path, mongoose);
-            schemaType.validate(validator, 'unique');
+            schemaType.validate(validator, message.replace(/{}/i,path));
         }
     });
 };
