@@ -1,6 +1,6 @@
 module.exports = function (schema, options) {
     var mongoose = options.mongoose;
-    var message = options.message || 'Problem: {} already exists';
+    var message = options.message || 'unique';
     schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path, mongoose);
