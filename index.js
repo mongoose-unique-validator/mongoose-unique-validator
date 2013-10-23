@@ -26,8 +26,10 @@ function buildUniqueValidator(path, mongoose) {
 
 function buildQuery(field, value, id) {
     var query = { $and: [] };
+    var target = {};
+    target[field] = value;
     query.$and.push({ _id: { $ne: id } });
-    query.$and.push({ field: value });
+    query.$and.push(target);
     return query;
 }
 
