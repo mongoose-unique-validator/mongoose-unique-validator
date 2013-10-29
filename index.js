@@ -15,15 +15,18 @@ function schemaTypeHasUniqueIndex(schemaType) {
 function buildUniqueValidator(path, mongoose) {
     return function (value, respond) {
         var model = mongoose.connection.model(this.constructor.modelName);
-        var query = buildQuery(path, value);
+        var query = buildQuery(path, value, this._id);
         var callback = buildValidationCallback(respond);
         model.findOne(query, callback);
     };
 }
 
-function buildQuery(field, value) {
-    var query = {};
-    query[field] = value;
+function buildQuery(field, value, id) {
+    var query = { $and: [] };
+    var target = {};
+    target[field] = value;
+    query.$and.push({ _id: { $ne: id } });
+    query.$and.push(target);
     return query;
 }
 
