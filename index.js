@@ -17,8 +17,7 @@ function schemaTypeHasUniqueIndex(schemaType) {
 function buildUniqueValidator(path, mongoose) {
     return function (value, respond) {
         var model = mongoose.connection.model(this.constructor.modelName);
-        var id = this._id;
-        var query = buildQuery(path, value, id);
+        var query = buildQuery(path, value, this._id);
         var callback = buildValidationCallback(respond);
         model.findOne(query, callback);
     };
