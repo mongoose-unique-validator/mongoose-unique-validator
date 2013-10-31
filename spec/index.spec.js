@@ -19,7 +19,7 @@ var userSchema = mongoose.Schema({
         type: String
     }
 });
-userSchema.plugin(uniqueValidator, { mongoose: mongoose });
+userSchema.plugin(uniqueValidator);
 var User = mongoose.model('User', userSchema);
 
 describe('Mongoose Unique Validator Plugin', function () {
