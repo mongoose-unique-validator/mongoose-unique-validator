@@ -14,14 +14,14 @@ Usage
 npm install mongoose-unique-validator
 ```
 
-Simply apply the plugin to your schema and pass in your `mongoose` instance:
+Then, simply apply the plugin to your schema:
 
 ```js
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
 
 var mySchema = mongoose.Schema(/* put your schema definition here */);
-mySchema.plugin(uniqueValidator, { mongoose: mongoose });
+mySchema.plugin(uniqueValidator);
 ```
 
 Example
@@ -42,7 +42,7 @@ var userSchema = mongoose.Schema({
 });
 
 // Apply the uniqueValidator plugin to userSchema.
-userSchema.plugin(uniqueValidator, { mongoose: mongoose });
+userSchema.plugin(uniqueValidator);
 ```
 
 Now when you try to save a user, the unique validator will check for duplicate database entries and report them just
