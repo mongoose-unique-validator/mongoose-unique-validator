@@ -61,12 +61,27 @@ user.save(function (err) {
     name: 'ValidationError',
     errors: {
         username: {
-            message: 'Validator "unique" failed for path username with value `JohnSmith`',
+            message: 'Validator failed for path `username` with value `JohnSmith`',
             name: 'ValidatorError',
             path: 'username',
-            type: 'unique',
+            type: 'user defined',
             value: 'JohnSmith'
         }
     }
 }
 ```
+
+Custom Error Messages
+---------------------
+
+You can pass through a custom error message as part of the optional `options` argument:
+
+```js
+userSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
+```
+
+You have access to all of the standard Mongoose error message templating:
+
+*   `{PATH}`
+*   `{VALUE}`
+*   `{TYPE}`
