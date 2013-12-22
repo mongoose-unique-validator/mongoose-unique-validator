@@ -1,8 +1,8 @@
-module.exports = function (schema) {
+module.exports = function (schema, message) {
     schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path);
-            schemaType.validate(validator, 'unique');
+            schemaType.validate(validator, message);
         }
     });
 };
