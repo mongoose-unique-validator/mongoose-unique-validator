@@ -35,11 +35,13 @@ describe('Mongoose Unique Validator Plugin', function () {
 
                     user.remove(function () {
                         duplicateUser.remove(function () {
-                            expect(err.errors.username.type).toBe('unique');
+                            expect(err.errors.username.message).toBe('unique');
+                            expect(err.errors.username.type).toBe('user defined');
                             expect(err.errors.username.path).toBe('username');
                             expect(err.errors.username.value).toBe('JohnSmith');
 
-                            expect(err.errors.email.type).toBe('unique');
+                            expect(err.errors.email.message).toBe('unique');
+                            expect(err.errors.email.type).toBe('user defined');
                             expect(err.errors.email.path).toBe('email');
                             expect(err.errors.email.value).toBe('john.smith@gmail.com');
 
