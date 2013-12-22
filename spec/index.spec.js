@@ -103,7 +103,7 @@ describe('Mongoose Unique Validator Plugin', function () {
 
     describe('when a custom error message is passed', function () {
 
-        var User = mongoose.model('UserErrorMessage', getUserSchema().plugin(uniqueValidator, 'Path: {PATH}, value: {VALUE}, type: {TYPE}'));
+        var User = mongoose.model('UserErrorMessage', getUserSchema().plugin(uniqueValidator, { message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}' }));
 
         it('a custom message error is thrown for fields with a unique index when present', function (done) {
             var user = getDuplicateUser(User);
