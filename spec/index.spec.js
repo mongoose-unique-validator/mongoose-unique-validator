@@ -22,12 +22,12 @@ describe('Mongoose Unique Validator Plugin', function () {
 
                         user.remove(function () {
                             duplicateUser.remove(function () {
-                                expect(err.errors.username.message).toBe('Validator failed for path `username` with value `JohnSmith`');
+                                expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `JohnSmith`');
                                 expect(err.errors.username.type).toBe('user defined');
                                 expect(err.errors.username.path).toBe('username');
                                 expect(err.errors.username.value).toBe('JohnSmith');
 
-                                expect(err.errors.email.message).toBe('Validator failed for path `email` with value `john.smith@gmail.com`');
+                                expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
                                 expect(err.errors.email.type).toBe('user defined');
                                 expect(err.errors.email.path).toBe('email');
                                 expect(err.errors.email.value).toBe('john.smith@gmail.com');

@@ -1,5 +1,5 @@
 module.exports = function (schema, options) {
-    var message;
+    var message = 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
     if (options && options.message) {
         message = options.message;
     }
