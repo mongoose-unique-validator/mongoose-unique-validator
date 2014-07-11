@@ -6,6 +6,7 @@ module.exports = function (schema, options) {
     schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path);
+            var message = schemaType.options.validate_unique_message || message;
             schemaType.validate(validator, message);
         }
     });
