@@ -6,11 +6,15 @@ module.exports = function (schema, options) {
     schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path);
-            var message = schemaType.options.validate_unique_message || message;
+            message = buildMessage(schemaType.options.unique, message);
             schemaType.validate(validator, message);
         }
     });
 };
+
+function buildMessage(uniqueOption, message){
+    return typeof uniqueOption === 'string' ? uniqueOption : message;
+}
 
 function schemaTypeHasUniqueIndex(schemaType) {
     return schemaType._index && schemaType._index.unique;

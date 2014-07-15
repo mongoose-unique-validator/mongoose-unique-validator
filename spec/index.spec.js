@@ -133,6 +133,38 @@ describe('Mongoose Unique Validator Plugin', function () {
 
     });
 
+    describe('when a custom error message is passed to the schema options', function(){
+
+        var User = mongoose.model('UserErrorCustomMessage', getUserSchemaWithCustomMessage().plugin(uniqueValidator));
+
+        it('a custom message error is thrown for fields with a unique index when present', function (done) {
+            var user = getDuplicateUser(User);
+            var duplicateUser = getDuplicateUser(User);
+
+            user.save(function () {
+                duplicateUser.save(function (err) {
+
+                    user.remove(function () {
+                        duplicateUser.remove(function () {
+                            expect(err.errors.username.message).toBe('Username is already used.');
+                            expect(err.errors.username.type).toBe('user defined');
+                            expect(err.errors.username.path).toBe('username');
+                            expect(err.errors.username.value).toBe('JohnSmith');
+
+                            expect(err.errors.email.message).toBe('It already exists.');
+                            expect(err.errors.email.type).toBe('user defined');
+                            expect(err.errors.email.path).toBe('email');
+                            expect(err.errors.email.value).toBe('john.smith@gmail.com');
+
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+
+    });
+
 });
 
 function getUserSchema() {
@@ -165,5 +197,41 @@ function getUniqueUser(User) {
         username: 'Robert Miller',
         email: 'bob@robertmiller.com',
         password: '@b0B#b0B$b0B%'
+    });
+}
+
+
+
+function getUserSchema() {
+    return mongoose.Schema({
+        username: {
+            type: String,
+            unique: true
+        },
+        email: {
+            type: String,
+            index: true,
+            unique: true
+        },
+        password: {
+            type: String
+        }
+    });
+}
+
+function getUserSchemaWithCustomMessage(){
+    return mongoose.Schema({
+        username: {
+            type: String,
+            unique: 'Username is already used.'
+        },
+        email: {
+            type: String,
+            index: true,
+            unique: 'It already exists.'
+        },
+        password: {
+            type: String
+        }
     });
 }
