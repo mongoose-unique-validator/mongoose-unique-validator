@@ -22,7 +22,7 @@
         "url": "https://github.com/blakehaswell/mongoose-unique-validator.git"
     },
     "devDependencies": {
-        "jasmine-node": "1.10.2",
+        "jasmine-node": "1.14.x",
         "mongoose": "3.8.x"
     }
 }
