@@ -184,42 +184,7 @@ function getUserSchema() {
     });
 }
 
-function getDuplicateUser(User) {
-    return new User({
-        username: 'JohnSmith',
-        email: 'john.smith@gmail.com',
-        password: 'j0hnNYb0i'
-    });
-}
-
-function getUniqueUser(User) {
-    return new User({
-        username: 'Robert Miller',
-        email: 'bob@robertmiller.com',
-        password: '@b0B#b0B$b0B%'
-    });
-}
-
-
-
-function getUserSchema() {
-    return mongoose.Schema({
-        username: {
-            type: String,
-            unique: true
-        },
-        email: {
-            type: String,
-            index: true,
-            unique: true
-        },
-        password: {
-            type: String
-        }
-    });
-}
-
-function getUserSchemaWithCustomMessage(){
+function getUserSchemaWithCustomMessage() {
     return mongoose.Schema({
         username: {
             type: String,
@@ -233,5 +198,21 @@ function getUserSchemaWithCustomMessage(){
         password: {
             type: String
         }
+    });
+}
+
+function getDuplicateUser(User) {
+    return new User({
+        username: 'JohnSmith',
+        email: 'john.smith@gmail.com',
+        password: 'j0hnNYb0i'
+    });
+}
+
+function getUniqueUser(User) {
+    return new User({
+        username: 'Robert Miller',
+        email: 'bob@robertmiller.com',
+        password: '@b0B#b0B$b0B%'
     });
 }
