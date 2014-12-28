@@ -3,13 +3,20 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('../index.js');
 
-mongoose.connect('mongodb://localhost/mongoose-unique-validator');
-
 describe('Mongoose Unique Validator Plugin', function () {
 
-    describe('when no custom error message is passed', function () {
+    // jamsmine 1.3 does not have `beforeAll`
+    it('starts the database connection', function (done) {
+        mongoose.connect('mongodb://localhost/mongoose-unique-validator', done);
+    });
 
-        var User = mongoose.model('User', getUserSchema().plugin(uniqueValidator));
+    describe('when no custom error message is passed', function () {
+        var User;
+
+        // jamsmine 1.3 does not have `beforeAll`
+        it('register User model', function () {
+            User = mongoose.model('User', getUserSchema().plugin(uniqueValidator));
+        })
 
         describe('when a duplicate record exists in the DB', function () {
 
@@ -103,7 +110,12 @@ describe('Mongoose Unique Validator Plugin', function () {
 
     describe('when a custom error message is passed', function () {
 
-        var User = mongoose.model('UserErrorMessage', getUserSchema().plugin(uniqueValidator, { message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}' }));
+        var User;
+
+        // jamsmine 1.3 does not have `beforeAll`
+        it('register UserErrorMessage model', function () {
+            User = mongoose.model('UserErrorMessage', getUserSchema().plugin(uniqueValidator, { message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}' }));
+        });
 
         it('a custom message error is thrown for fields with a unique index when present', function (done) {
             var user = getDuplicateUser(User);
@@ -135,7 +147,12 @@ describe('Mongoose Unique Validator Plugin', function () {
 
     describe('when a custom error message is passed to the schema options', function(){
 
-        var User = mongoose.model('UserErrorCustomMessage', getUserSchemaWithCustomMessage().plugin(uniqueValidator));
+        var User;
+
+        // jamsmine 1.3 does not have `beforeAll`
+        it('register UserErrorCustomMessage model', function () {
+            User = mongoose.model('UserErrorCustomMessage', getUserSchemaWithCustomMessage().plugin(uniqueValidator));
+        });
 
         it('a custom message error is thrown for fields with a unique index when present', function (done) {
             var user = getDuplicateUser(User);
@@ -163,6 +180,18 @@ describe('Mongoose Unique Validator Plugin', function () {
             });
         });
 
+    });
+
+    // jamsmine 1.3 does not have `afterAll`
+    it('tears down the database', function (done) {
+        mongoose.connection.db.dropDatabase();
+
+        // Remove models definition
+        for (key in mongoose.connection.models) {
+            delete mongoose.connection.models[key];
+        }
+
+        mongoose.disconnect(done);
     });
 
 });
