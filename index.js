@@ -33,7 +33,11 @@ function buildQuery(field, value, id) {
     var query = { $and: [] };
     var target = {};
     target[field] = value;
-    query.$and.push({ _id: { $ne: id } });
+
+    if (field != '_id') {
+        query.$and.push({ _id: { $ne: id } });
+    }
+
     query.$and.push(target);
     return query;
 }
