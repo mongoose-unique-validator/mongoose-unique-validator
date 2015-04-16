@@ -5,7 +5,7 @@ module.exports = function (schema, options) {
     }
     schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
-            var validator = buildUniqueValidator(path);
+            var validator = buildUniqueValidator(path, options);
             message = buildMessage(schemaType.options.unique, message);
             schemaType.validate(validator, message);
         }
@@ -20,19 +20,25 @@ function schemaTypeHasUniqueIndex(schemaType) {
     return schemaType._index && schemaType._index.unique;
 }
 
-function buildUniqueValidator(path) {
+function buildUniqueValidator(path, options) {
     return function (value, respond) {
         var model = this.model(this.constructor.modelName);
-        var query = buildQuery(path, value, this._id);
+        var query = buildQuery(path, value, this._id, options);
         var callback = buildValidationCallback(respond);
         model.findOne(query, callback);
     };
 }
 
-function buildQuery(field, value, id) {
+function buildQuery(field, value, id, options) {
     var query = { $and: [] };
     var target = {};
-    target[field] = value;
+
+    if(options && options.caseInsensitive) {
+        target[field] = new RegExp('^'+value+'$', 'i');
+    } else {
+        target[field] = value;
+    }
+
     query.$and.push({ _id: { $ne: id } });
     query.$and.push(target);
     return query;

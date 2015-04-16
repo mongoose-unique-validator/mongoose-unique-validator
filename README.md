@@ -85,3 +85,10 @@ You have access to all of the standard Mongoose error message templating:
 *   `{PATH}`
 *   `{VALUE}`
 *   `{TYPE}`
+
+Case insensitive validation
+---------------------
+Example:
+```js
+mySchema.plugin(uniqueValidator, {caseInsensitive: true});
+```
