@@ -164,7 +164,102 @@ describe('Mongoose Unique Validator Plugin', function () {
         });
 
     });
+    
+    describe('when case insensitive validation is set', function () {
 
+        var User = mongoose.model('User', getUserSchema().plugin(uniqueValidator, {caseInsensitive: true}));
+
+        describe('when a duplicate record (other case) exists in the DB', function () {
+
+            it('a validation error is thrown for fields with a unique index', function (done) {
+                var user = getDuplicateUser(User);
+                var duplicateUser = getDuplicateUserOtherCase(User);
+
+                user.save(function () {
+                    duplicateUser.save(function (err) {
+
+                        user.remove(function () {
+                            duplicateUser.remove(function () {
+                                expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `JohnSmith`');
+                                expect(err.errors.username.type).toBe('user defined');
+                                expect(err.errors.username.path).toBe('username');
+                                expect(err.errors.username.value).toBe('JohnSmith');
+
+                                expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
+                                expect(err.errors.email.type).toBe('user defined');
+                                expect(err.errors.email.path).toBe('email');
+                                expect(err.errors.email.value).toBe('john.smith@gmail.com');
+
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+
+            it('no validation error is thrown for fields without a unique index', function (done) {
+                var user = getDuplicateUser(User);
+                var duplicateUser = getDuplicateUserOtherCase(User);
+
+                user.save(function () {
+                    duplicateUser.save(function (err) {
+
+                        user.remove(function () {
+                            duplicateUser.remove(function () {
+                                expect(err.errors.password).toBeUndefined();
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+            
+        });
+
+        describe('when no duplicate record exists in the DB', function () {
+
+            it('no validation errors are thrown for fields with a unique index', function (done) {
+                var user = getDuplicateUser(User);
+                var uniqueUser = getUniqueUser(User);
+
+                user.save(function () {
+                    uniqueUser.save(function (err) {
+                        user.remove(function () {
+                            uniqueUser.remove(function () {
+                                expect(err).toBeNull();
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        describe('when a unique record exists in the DB', function () {
+
+            it('can be saved even if validation is triggered on a field with a unique index', function (done) {
+                var user = getUniqueUser(User);
+
+                user.save(function () {
+
+                    // Changing a field and then changing it back to what it was seems to change an internal Mongoose flag
+                    // and causes validation to occur even though the value of the field hasn’t changed.
+                    user.email = 'robert.miller@gmail.com';
+                    user.email = 'bob@robertmiller.com';
+
+                    user.save(function (err) {
+                        user.remove(function () {
+                            expect(err).toBeNull();
+                            done();
+                        });
+                    });
+                });
+            });
+
+        });
+
+    });
+    
 });
 
 function getUserSchema() {
@@ -205,6 +300,14 @@ function getDuplicateUser(User) {
     return new User({
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',
+        password: 'j0hnNYb0i'
+    });
+}
+
+function getDuplicateUserOtherCase(User) {
+    return new User({
+        username: 'johnsmith',
+        email: 'jOhn.Smith@gmail.com',
         password: 'j0hnNYb0i'
     });
 }
