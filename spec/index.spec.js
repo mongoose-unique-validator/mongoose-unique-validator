@@ -164,10 +164,10 @@ describe('Mongoose Unique Validator Plugin', function () {
         });
 
     });
-    
+
     describe('when case insensitive validation is set', function () {
 
-        var User = mongoose.model('User', getUserSchema().plugin(uniqueValidator, {caseInsensitive: true}));
+        var User = mongoose.model('UserCaseInsensitive', getUserSchema().plugin(uniqueValidator, {caseInsensitive: true}));
 
         describe('when a duplicate record (other case) exists in the DB', function () {
 
@@ -180,15 +180,15 @@ describe('Mongoose Unique Validator Plugin', function () {
 
                         user.remove(function () {
                             duplicateUser.remove(function () {
-                                expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `JohnSmith`');
+                                expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `johnsmith`');
                                 expect(err.errors.username.type).toBe('user defined');
                                 expect(err.errors.username.path).toBe('username');
-                                expect(err.errors.username.value).toBe('JohnSmith');
+                                expect(err.errors.username.value).toBe('johnsmith');
 
-                                expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
+                                expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `jOhn.Smith@gmail.com`');
                                 expect(err.errors.email.type).toBe('user defined');
                                 expect(err.errors.email.path).toBe('email');
-                                expect(err.errors.email.value).toBe('john.smith@gmail.com');
+                                expect(err.errors.email.value).toBe('jOhn.Smith@gmail.com');
 
                                 done();
                             });
@@ -213,7 +213,7 @@ describe('Mongoose Unique Validator Plugin', function () {
                     });
                 });
             });
-            
+
         });
 
         describe('when no duplicate record exists in the DB', function () {
@@ -259,7 +259,7 @@ describe('Mongoose Unique Validator Plugin', function () {
         });
 
     });
-    
+
 });
 
 function getUserSchema() {
