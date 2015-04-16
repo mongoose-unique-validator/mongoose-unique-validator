@@ -165,6 +165,59 @@ describe('Mongoose Unique Validator Plugin', function () {
 
     });
 
+    describe('when case insensitive validation is set', function () {
+
+        var User = mongoose.model('UserCaseInsensitive', getUserSchema().plugin(uniqueValidator, {caseInsensitive: true}));
+
+        describe('when a duplicate record (other case) exists in the DB', function () {
+
+            it('a validation error is thrown for fields with a unique index', function (done) {
+                var user = getDuplicateUser(User);
+                var duplicateUser = getDuplicateUserOtherCase(User);
+
+                user.save(function () {
+                    duplicateUser.save(function (err) {
+
+                        user.remove(function () {
+                            duplicateUser.remove(function () {
+                                expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `johnsmith`');
+                                expect(err.errors.username.type).toBe('user defined');
+                                expect(err.errors.username.path).toBe('username');
+                                expect(err.errors.username.value).toBe('johnsmith');
+
+                                expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `jOhn.Smith@gmail.com`');
+                                expect(err.errors.email.type).toBe('user defined');
+                                expect(err.errors.email.path).toBe('email');
+                                expect(err.errors.email.value).toBe('jOhn.Smith@gmail.com');
+
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+
+            it('no validation error is thrown for fields without a unique index', function (done) {
+                var user = getDuplicateUser(User);
+                var duplicateUser = getDuplicateUserOtherCase(User);
+
+                user.save(function () {
+                    duplicateUser.save(function (err) {
+
+                        user.remove(function () {
+                            duplicateUser.remove(function () {
+                                expect(err.errors.password).toBeUndefined();
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+
+        });
+
+    });
+
 });
 
 function getUserSchema() {
@@ -205,6 +258,14 @@ function getDuplicateUser(User) {
     return new User({
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',
+        password: 'j0hnNYb0i'
+    });
+}
+
+function getDuplicateUserOtherCase(User) {
+    return new User({
+        username: 'johnsmith',
+        email: 'jOhn.Smith@gmail.com',
         password: 'j0hnNYb0i'
     });
 }
