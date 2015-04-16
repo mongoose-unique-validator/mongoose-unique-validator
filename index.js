@@ -33,7 +33,7 @@ function buildQuery(field, value, id, options) {
     var query = { $and: [] };
     var target = {};
 
-    if(options.caseInsensitive) {
+    if(options && options.caseInsensitive) {
         target[field] = new RegExp('^'+value+'$', 'i');
     } else {
         target[field] = value;
