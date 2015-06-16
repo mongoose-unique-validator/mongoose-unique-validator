@@ -9,92 +9,96 @@ describe('Mongoose Unique Validator Plugin', function () {
 
     describe('when no custom error message is passed', function () {
 
-        var User = mongoose.model('User', getUserSchema().plugin(uniqueValidator));
+        describe('when no custom error type is passed', function () {
 
-        describe('when a duplicate record exists in the DB', function () {
+            var User = mongoose.model('User', getUserSchema().plugin(uniqueValidator));
 
-            it('a validation error is thrown for fields with a unique index', function (done) {
-                var user = getDuplicateUser(User);
-                var duplicateUser = getDuplicateUser(User);
+            describe('when a duplicate record exists in the DB', function () {
 
-                user.save(function () {
-                    duplicateUser.save(function (err) {
+                it('a validation error is thrown for fields with a unique index', function (done) {
+                    var user = getDuplicateUser(User);
+                    var duplicateUser = getDuplicateUser(User);
 
-                        user.remove(function () {
-                            duplicateUser.remove(function () {
-                                expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `JohnSmith`');
-                                expect(err.errors.username.type).toBe('user defined');
-                                expect(err.errors.username.path).toBe('username');
-                                expect(err.errors.username.value).toBe('JohnSmith');
+                    user.save(function () {
+                        duplicateUser.save(function (err) {
 
-                                expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
-                                expect(err.errors.email.type).toBe('user defined');
-                                expect(err.errors.email.path).toBe('email');
-                                expect(err.errors.email.value).toBe('john.smith@gmail.com');
+                            user.remove(function () {
+                                duplicateUser.remove(function () {
+                                    expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `JohnSmith`');
+                                    expect(err.errors.username.kind).toBe('unique');
+                                    expect(err.errors.username.path).toBe('username');
+                                    expect(err.errors.username.value).toBe('JohnSmith');
 
-                                done();
+                                    expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
+                                    expect(err.errors.email.kind).toBe('unique');
+                                    expect(err.errors.email.path).toBe('email');
+                                    expect(err.errors.email.value).toBe('john.smith@gmail.com');
+
+                                    done();
+                                });
+                            });
+                        });
+                    });
+                });
+
+                it('no validation error is thrown for fields without a unique index', function (done) {
+                    var user = getDuplicateUser(User);
+                    var duplicateUser = getDuplicateUser(User);
+
+                    user.save(function () {
+                        duplicateUser.save(function (err) {
+
+                            user.remove(function () {
+                                duplicateUser.remove(function () {
+                                    expect(err.errors.password).toBeUndefined();
+                                    done();
+                                });
                             });
                         });
                     });
                 });
             });
 
-            it('no validation error is thrown for fields without a unique index', function (done) {
-                var user = getDuplicateUser(User);
-                var duplicateUser = getDuplicateUser(User);
+            describe('when no duplicate record exists in the DB', function () {
 
-                user.save(function () {
-                    duplicateUser.save(function (err) {
+                it('no validation errors are thrown for fields with a unique index', function (done) {
+                    var user = getDuplicateUser(User);
+                    var uniqueUser = getUniqueUser(User);
 
-                        user.remove(function () {
-                            duplicateUser.remove(function () {
-                                expect(err.errors.password).toBeUndefined();
-                                done();
+                    user.save(function () {
+                        uniqueUser.save(function (err) {
+                            user.remove(function () {
+                                uniqueUser.remove(function () {
+                                    expect(err).toBeNull();
+                                    done();
+                                });
                             });
                         });
                     });
                 });
             });
-        });
 
-        describe('when no duplicate record exists in the DB', function () {
+            describe('when a unique record exists in the DB', function () {
 
-            it('no validation errors are thrown for fields with a unique index', function (done) {
-                var user = getDuplicateUser(User);
-                var uniqueUser = getUniqueUser(User);
+                it('can be saved even if validation is triggered on a field with a unique index', function (done) {
+                    var user = getUniqueUser(User);
 
-                user.save(function () {
-                    uniqueUser.save(function (err) {
-                        user.remove(function () {
-                            uniqueUser.remove(function () {
+                    user.save(function () {
+
+                        // Changing a field and then changing it back to what it was seems to change an internal Mongoose flag
+                        // and causes validation to occur even though the value of the field hasn’t changed.
+                        user.email = 'robert.miller@gmail.com';
+                        user.email = 'bob@robertmiller.com';
+
+                        user.save(function (err) {
+                            user.remove(function () {
                                 expect(err).toBeNull();
                                 done();
                             });
                         });
                     });
                 });
-            });
-        });
 
-        describe('when a unique record exists in the DB', function () {
-
-            it('can be saved even if validation is triggered on a field with a unique index', function (done) {
-                var user = getUniqueUser(User);
-
-                user.save(function () {
-
-                    // Changing a field and then changing it back to what it was seems to change an internal Mongoose flag
-                    // and causes validation to occur even though the value of the field hasn’t changed.
-                    user.email = 'robert.miller@gmail.com';
-                    user.email = 'bob@robertmiller.com';
-
-                    user.save(function (err) {
-                        user.remove(function () {
-                            expect(err).toBeNull();
-                            done();
-                        });
-                    });
-                });
             });
 
         });
@@ -114,13 +118,13 @@ describe('Mongoose Unique Validator Plugin', function () {
 
                     user.remove(function () {
                         duplicateUser.remove(function () {
-                            expect(err.errors.username.message).toBe('Path: username, value: JohnSmith, type: user defined');
-                            expect(err.errors.username.type).toBe('user defined');
+                            expect(err.errors.username.message).toBe('Path: username, value: JohnSmith, type: unique');
+                            expect(err.errors.username.kind).toBe('unique');
                             expect(err.errors.username.path).toBe('username');
                             expect(err.errors.username.value).toBe('JohnSmith');
 
-                            expect(err.errors.email.message).toBe('Path: email, value: john.smith@gmail.com, type: user defined');
-                            expect(err.errors.email.type).toBe('user defined');
+                            expect(err.errors.email.message).toBe('Path: email, value: john.smith@gmail.com, type: unique');
+                            expect(err.errors.email.kind).toBe('unique');
                             expect(err.errors.email.path).toBe('email');
                             expect(err.errors.email.value).toBe('john.smith@gmail.com');
 
@@ -147,12 +151,76 @@ describe('Mongoose Unique Validator Plugin', function () {
                     user.remove(function () {
                         duplicateUser.remove(function () {
                             expect(err.errors.username.message).toBe('Username is already used.');
-                            expect(err.errors.username.type).toBe('user defined');
+                            expect(err.errors.username.kind).toBe('unique');
                             expect(err.errors.username.path).toBe('username');
                             expect(err.errors.username.value).toBe('JohnSmith');
 
                             expect(err.errors.email.message).toBe('It already exists.');
-                            expect(err.errors.email.type).toBe('user defined');
+                            expect(err.errors.email.kind).toBe('unique');
+                            expect(err.errors.email.path).toBe('email');
+                            expect(err.errors.email.value).toBe('john.smith@gmail.com');
+
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+
+    });
+
+    describe('when a custom error type is passed', function () {
+
+        var User = mongoose.model('UserErrorType', getUserSchema().plugin(uniqueValidator, { type: 'distinct' }));
+
+        it('a custom error type is thrown for fields with a unique index when present', function (done) {
+            var user = getDuplicateUser(User);
+            var duplicateUser = getDuplicateUser(User);
+
+            user.save(function () {
+                duplicateUser.save(function (err) {
+
+                    user.remove(function () {
+                        duplicateUser.remove(function () {
+                            expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `JohnSmith`');
+                            expect(err.errors.username.kind).toBe('distinct');
+                            expect(err.errors.username.path).toBe('username');
+                            expect(err.errors.username.value).toBe('JohnSmith');
+
+                            expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
+                            expect(err.errors.email.kind).toBe('distinct');
+                            expect(err.errors.email.path).toBe('email');
+                            expect(err.errors.email.value).toBe('john.smith@gmail.com');
+
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+
+    });
+
+    describe('when a custom error kind is passed', function () {
+
+        var User = mongoose.model('UserErrorKind', getUserSchema().plugin(uniqueValidator, { kind: 'distinct' }));
+
+        it('a custom error type is thrown for fields with a unique index when present', function (done) {
+            var user = getDuplicateUser(User);
+            var duplicateUser = getDuplicateUser(User);
+
+            user.save(function () {
+                duplicateUser.save(function (err) {
+
+                    user.remove(function () {
+                        duplicateUser.remove(function () {
+                            expect(err.errors.username.message).toBe('Error, expected `username` to be unique. Value: `JohnSmith`');
+                            expect(err.errors.username.kind).toBe('distinct');
+                            expect(err.errors.username.path).toBe('username');
+                            expect(err.errors.username.value).toBe('JohnSmith');
+
+                            expect(err.errors.email.message).toBe('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
+                            expect(err.errors.email.kind).toBe('distinct');
                             expect(err.errors.email.path).toBe('email');
                             expect(err.errors.email.value).toBe('john.smith@gmail.com');
 

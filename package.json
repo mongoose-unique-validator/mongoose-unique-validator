@@ -23,6 +23,6 @@
     },
     "devDependencies": {
         "jasmine-node": "1.14.x",
-        "mongoose": "3.8.x"
+        "mongoose": "4.0.x"
     }
 }
