@@ -1,13 +1,12 @@
 module.exports = function (schema, options) {
-    var message = 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
-    if (options && options.message) {
-        message = options.message;
-    }
+    options = options || {};
+    var message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
+    var type = options.type || options.kind || 'unique';
     schema.eachPath(function (path, schemaType) {
         if (schemaTypeHasUniqueIndex(schemaType)) {
             var validator = buildUniqueValidator(path);
             message = buildMessage(schemaType.options.unique, message);
-            schemaType.validate(validator, message);
+            schemaType.validate(validator, { message: message, type: type });
         }
     });
 };
