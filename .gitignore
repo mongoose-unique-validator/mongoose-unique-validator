@@ -12,3 +12,4 @@ Desktop.ini
 $RECYCLE.BIN/
 node_modules/
 .tmp
+npm-debug.log

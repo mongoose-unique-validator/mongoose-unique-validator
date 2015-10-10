@@ -1,9 +1,11 @@
+'use strict';
+
 var mongoose = require('mongoose');
 
 // Helper methods/objects for tests
 module.exports = {
     createUserSchema: function() {
-        return mongoose.Schema({
+        return new mongoose.Schema({
             username: {
                 type: String,
                 unique: true
@@ -20,7 +22,7 @@ module.exports = {
     },
 
     createCustomUserSchema: function() {
-        return mongoose.Schema({
+        return new mongoose.Schema({
             username: {
                 type: String,
                 unique: 'Username is already used.'
@@ -37,9 +39,9 @@ module.exports = {
     },
 
     USERS: [{
-            username: 'JohnSmith',
-            email: 'john.smith@gmail.com',
-            password: 'j0hnNYb0i'
+        username: 'JohnSmith',
+        email: 'john.smith@gmail.com',
+        password: 'j0hnNYb0i'
     }, {
         username: 'Robert Miller',
         email: 'bob@robertmiller.com',

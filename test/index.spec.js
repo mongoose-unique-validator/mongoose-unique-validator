@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('./helpers');
 var expect = require('chai').expect;
 var mongoose = require('mongoose');
@@ -28,7 +30,7 @@ describe('Mongoose Unique Validator', function() {
         });
     });
 
-    describe('Default Configuration', function () {
+    describe('Default Configuration', function() {
         var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
         models.push(User);
 
@@ -38,6 +40,7 @@ describe('Mongoose Unique Validator', function() {
             promise.then(function() {
                 // Try saving a duplicate
                 new User(helpers.USERS[0]).save().catch(function(err) {
+                    // console.log(err);
                     expect(err.errors.username.message).to.equal('Error, expected `username` to be unique. Value: `JohnSmith`');
                     expect(err.errors.username.properties.type).to.equal('user defined');
                     expect(err.errors.username.properties.path).to.equal('username');
@@ -65,7 +68,7 @@ describe('Mongoose Unique Validator', function() {
         });
     });
 
-    describe('Custom Configuration', function () {
+    describe('Custom Configuration', function() {
         var User = mongoose.model('UserErrorMessage', helpers.createUserSchema().plugin(uniqueValidator, {
             message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}'
         }));
@@ -87,7 +90,7 @@ describe('Mongoose Unique Validator', function() {
         });
     });
 
-    describe('Configuration via Schema', function () {
+    describe('Configuration via Schema', function() {
         var User = mongoose.model('UserErrorCustomMessage', helpers.createCustomUserSchema().plugin(uniqueValidator));
         models.push(User);
 
