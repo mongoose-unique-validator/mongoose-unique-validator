@@ -1,2 +1,14 @@
-.idea/
+*.sublime-workspace
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 node_modules/
+.tmp

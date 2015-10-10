@@ -1,28 +1,38 @@
 {
-    "name": "mongoose-unique-validator",
-    "version": "0.4.1",
-    "description": "mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.",
-    "main": "index.js",
-    "scripts": {
-        "test": "./node_modules/.bin/jasmine-node spec/ --forceexit --captureExceptions"
-    },
-    "keywords": [
-        "mongoose",
-        "unique",
-        "validator"
-    ],
-    "author": {
-        "name": "Blake Haswell",
-        "email": "haswell00@gmail.com",
-        "url": "http://blakehaswell.com/"
-    },
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/blakehaswell/mongoose-unique-validator.git"
-    },
-    "devDependencies": {
-        "jasmine-node": "1.14.x",
-        "mongoose": "3.8.x"
+  "name": "mongoose-unique-validator",
+  "version": "0.4.1",
+  "description": "mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "keywords": [
+    "mongoose",
+    "unique",
+    "validator"
+  ],
+  "author": {
+    "name": "Blake Haswell",
+    "email": "haswell00@gmail.com",
+    "url": "http://blakehaswell.com/"
+  },
+  "contributors": [
+    {
+      "name": "Mike Botsko",
+      "email": "botsko@gmail.com"
     }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blakehaswell/mongoose-unique-validator.git"
+  },
+  "devDependencies": {
+    "bluebird": "^2.10.2",
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3"
+  },
+  "peerDependencies": {
+    "mongoose": "^4.1.10"
+  }
 }
