@@ -38,6 +38,44 @@ module.exports = {
         });
     },
 
+    createCompoundIndexSchema: function() {
+        var schema = new mongoose.Schema({
+            username: {
+                type: String
+            },
+            email: {
+                type: String,
+                index: true
+            },
+            password: {
+                type: String
+            }
+        });
+
+        schema.index({ username: 1, email: 1 }, { unique: true });
+
+        return schema;
+    },
+
+    createCustomCompoundIndexSchema: function() {
+        var schema = new mongoose.Schema({
+            username: {
+                type: String
+            },
+            email: {
+                type: String,
+                index: true
+            },
+            password: {
+                type: String
+            }
+        });
+
+        schema.index({ username: 1, email: 1 }, { unique: 'Combo in use.' });
+
+        return schema;
+    },
+
     USERS: [{
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',

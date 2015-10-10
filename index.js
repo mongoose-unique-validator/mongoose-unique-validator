@@ -3,12 +3,11 @@
 /**
  * Builds query to find any duplicate records.
  *
- * @param {string} path Path name.
- * @param {string} value Value to search for.
+ * @param {string} conditions Path/value conditions.
  * @param {object} id ObjectID of self
  * @return {object} MongoDB query object
  */
-var buildQuery = function buildQuery(path, value, id) {
+var buildQuery = function buildQuery(conditions, id) {
     // Build a base query, ensure duplicates aren't ourself
     var query = { $and: [{
         _id: {
@@ -17,29 +16,9 @@ var buildQuery = function buildQuery(path, value, id) {
     }] };
 
     // Match target path
-    var target = {};
-    target[path] = value;
-    query.$and.push(target);
+    query.$and = query.$and.concat(conditions);
 
     return query;
-};
-
-/**
- * Mongoose validator to be executed per-path.
- *
- * @param {string} path Path name.
- * @return {function} Mongoose validation function
- */
-var buildValidator = function buildValidator(path) {
-    return function(value, respond) {
-        // Awaiting more official way to obtain reference to model.
-        // https://github.com/Automattic/mongoose/issues/3430
-        var model = this.model(this.constructor.modelName);
-        var query = buildQuery(path, value, this._id);
-        model.findOne(query, function(err, document) {
-            respond(!document);
-        });
-    };
 };
 
 // Export the mongoose plugin
@@ -47,13 +26,36 @@ module.exports = function(schema, options) {
     options = options || {};
     var message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
 
-    schema.eachPath(function(path, schemaType) {
-        if (schemaType._index && schemaType._index.unique) {
-            if (typeof schemaType.options.unique === 'string') {
-                message = schemaType.options.unique;
-            }
+    schema.indexes().forEach(function(index) {
+        var paths = Object.keys(index[0]);
+        var indexOptions = index[1];
 
-            schemaType.validate(buildValidator(path), message);
+        if (indexOptions.unique) {
+            paths.forEach(function(path) {
+                var pathMessage = message;
+                if (typeof indexOptions.unique === 'string') {
+                    pathMessage = indexOptions.unique;
+                }
+
+                schema.path(path).validate(function(value, respond) {
+                    var doc = this;
+
+                    var conditions = [];
+                    paths.forEach(function(path) {
+                        var condition = {};
+                        condition[path] = doc[path];
+                        conditions.push(condition);
+                    });
+
+                    // Awaiting more official way to obtain reference to model.
+                    // https://github.com/Automattic/mongoose/issues/3430
+                    var model = doc.model(doc.constructor.modelName);
+                    var query = buildQuery(conditions, doc._id);
+                    model.findOne(query, function(err, document) {
+                        respond(!document);
+                    });
+                }, pathMessage);
+            });
         }
     });
 };

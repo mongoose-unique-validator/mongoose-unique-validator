@@ -66,6 +66,23 @@ describe('Mongoose Unique Validator', function() {
             });
             promise.catch(done);
         });
+
+        it('throws validation error for unique compound index violation', function(done) {
+            var User = mongoose.model('CompoundUser', helpers.createCompoundIndexSchema().plugin(uniqueValidator));
+            models.push(User);
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS[0]).save().catch(function(err) {
+                    expect(err.errors.username.message).to.equal('Error, expected `username` to be unique. Value: `JohnSmith`');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 
     describe('Custom Configuration', function() {
@@ -88,10 +105,29 @@ describe('Mongoose Unique Validator', function() {
             });
             promise.catch(done);
         });
+
+        it('throws validation error for unique compound index violation', function(done) {
+            var User = mongoose.model('CompoundUserCustomError', helpers.createCompoundIndexSchema().plugin(uniqueValidator, {
+                message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}'
+            }));
+            models.push(User);
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS[0]).save().catch(function(err) {
+                    expect(err.errors.username.message).to.equal('Path: username, value: JohnSmith, type: user defined');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 
     describe('Configuration via Schema', function() {
-        var User = mongoose.model('UserErrorCustomMessage', helpers.createCustomUserSchema().plugin(uniqueValidator));
+        var User = mongoose.model('UserErrorSchemaMessage', helpers.createCustomUserSchema().plugin(uniqueValidator));
         models.push(User);
 
         it('throws validation error for unique index violation', function(done) {
@@ -102,6 +138,23 @@ describe('Mongoose Unique Validator', function() {
                 new User(helpers.USERS[0]).save().catch(function(err) {
                     expect(err.errors.username.message).to.equal('Username is already used.');
                     expect(err.errors.email.message).to.equal('It already exists.');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('throws validation error for unique compound index violation', function(done) {
+            var User = mongoose.model('CompoundUserErrorSchemaMessage', helpers.createCustomCompoundIndexSchema().plugin(uniqueValidator));
+            models.push(User);
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS[0]).save().catch(function(err) {
+                    expect(err.errors.username.message).to.equal('Combo in use.');
 
                     done();
                 });
