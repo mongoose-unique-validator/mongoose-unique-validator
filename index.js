@@ -44,10 +44,8 @@ var buildValidator = function buildValidator(path) {
 
 // Export the mongoose plugin
 module.exports = function(schema, options) {
-    var message = 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
-    if (options && options.message) {
-        message = options.message;
-    }
+    options = options || {};
+    var message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
 
     schema.eachPath(function(path, schemaType) {
         if (schemaType._index && schemaType._index.unique) {
