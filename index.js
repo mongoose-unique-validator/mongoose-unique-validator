@@ -29,8 +29,7 @@ module.exports = function(schema, options) {
                     // Awaiting more official way to obtain reference to model.
                     // https://github.com/Automattic/mongoose/issues/3430
                     var model = doc.model(doc.constructor.modelName);
-                    var query = { $and: conditions };
-                    model.where(query).count(function(err, count) {
+                    model.where({ $and: conditions }).count(function(err, count) {
                         respond(((doc.isNew && count === 0) || (!doc.isNew && count === 1)));
                     });
                 }, pathMessage);
