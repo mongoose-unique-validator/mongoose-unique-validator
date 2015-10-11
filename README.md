@@ -1,6 +1,8 @@
 mongoose-unique-validator
 =========================
 
+[![Build Status](https://travis-ci.org/blakehaswell/mongoose-unique-validator.svg)](https://travis-ci.org/blakehaswell/mongoose-unique-validator)
+
 mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.
 
 This makes error handling much easier, since you will get a Mongoose validation error when you attempt to violate a
