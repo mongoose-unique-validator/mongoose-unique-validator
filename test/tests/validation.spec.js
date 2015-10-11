@@ -75,5 +75,37 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('throws error on unique violation for custom _id field', function(done) {
+            var Planet = mongoose.model('Planet', helpers.createCustomIdSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new Planet({ _id: 'mercury' }).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new Planet({ _id: 'mercury' }).save().catch(function(err) {
+                    expect(err).is.not.null;
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('does not validate saving self (with custom _id field)', function(done) {
+            var Planet = mongoose.model('Planet', helpers.createCustomIdSchema().plugin(uniqueValidator));
+
+            var planet = new Planet({ _id: 'mercury' });
+
+            // Save a user
+            var promise = planet.save();
+            promise.then(function() {
+                planet.position = 1;
+                planet.save().catch(done).then(function() {
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };

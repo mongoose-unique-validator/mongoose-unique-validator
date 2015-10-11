@@ -92,6 +92,16 @@ module.exports = {
         return schema;
     },
 
+    createCustomIdSchema: function() {
+        return new mongoose.Schema({
+            _id: {
+                type: String,
+                unique: true
+            },
+            position: Number
+        });
+    },
+
     USERS: [{
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',
