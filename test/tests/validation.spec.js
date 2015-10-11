@@ -107,5 +107,34 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('does not throw error for sparse fields', function(done) {
+            var Student = mongoose.model('Student', helpers.createSparseUserSchema().plugin(uniqueValidator));
+
+            // Save the first student without a username
+            var promise = new Student(helpers.USERS[2]).save();
+            promise.then(function() {
+                // Try saving a unique student without a username
+                new Student(helpers.USERS[3]).save().catch(done).then(function() {
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('throws error for duplicates in sparse fields', function(done) {
+            var Student = mongoose.model('Student', helpers.createSparseUserSchema().plugin(uniqueValidator));
+
+            // Save the first student without a username
+            var promise = new Student(helpers.USERS[4]).save();
+            promise.then(function() {
+                // Try saving a unique student without a username
+                new Student(helpers.USERS[5]).save().catch(function(err) {
+                    expect(err).is.not.null;
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };

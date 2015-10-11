@@ -102,6 +102,21 @@ module.exports = {
         });
     },
 
+    createSparseUserSchema: function() {
+        return new mongoose.Schema({
+            username: {
+                type: String,
+                unique: true,
+                sparse: true
+            },
+            email: {
+                type: String,
+                index: true,
+                unique: true
+            }
+        });
+    },
+
     USERS: [{
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',
@@ -110,5 +125,15 @@ module.exports = {
         username: 'Robert Miller',
         email: 'bob@robertmiller.com',
         password: '@b0B#b0B$b0B%'
+    }, {
+        email: 'john.smith@gmail.com'
+    }, {
+        email: 'bob@robertmiller.com'
+    }, {
+        email: 'john.smith@gmail.com',
+        username: 'JohnSmith'
+    }, {
+        email: 'john.smith2000@gmail.com',
+        username: 'JohnSmith'
     }]
 };
