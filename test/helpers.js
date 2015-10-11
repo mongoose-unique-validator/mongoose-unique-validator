@@ -4,6 +4,22 @@ var mongoose = require('mongoose');
 
 // Helper methods/objects for tests
 module.exports = {
+    afterEach: function(done) {
+        var collections = Object.keys(mongoose.connection.collections);
+        var l = collections.length;
+        collections.forEach(function(coll) {
+            mongoose.connection.collections[coll].remove();
+            l--;
+
+            if (!l) {
+                mongoose.models = {};
+                mongoose.modelSchemas = {};
+                mongoose.connection.models = {};
+                done();
+            }
+        });
+    },
+
     createUserSchema: function() {
         return new mongoose.Schema({
             username: {
