@@ -29,6 +29,7 @@
   "devDependencies": {
     "bluebird": "^2.10.2",
     "chai": "^3.3.0",
+    "eslint": "^1.6.0",
     "mocha": "^2.3.3"
   },
   "peerDependencies": {
