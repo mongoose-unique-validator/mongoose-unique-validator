@@ -59,5 +59,21 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('does not validate saving self', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            var user = new User(helpers.USERS[0]);
+
+            // Save a user
+            var promise = user.save();
+            promise.then(function() {
+                user.password = 'somethingNew';
+                user.save().catch(done).then(function() {
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };

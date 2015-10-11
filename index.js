@@ -1,26 +1,5 @@
 'use strict';
 
-/**
- * Builds query to find any duplicate records.
- *
- * @param {string} conditions Path/value conditions.
- * @param {object} id ObjectID of self
- * @return {object} MongoDB query object
- */
-var buildQuery = function buildQuery(conditions, id) {
-    // Build a base query, ensure duplicates aren't ourself
-    var query = { $and: [{
-        _id: {
-            $ne: id
-        }
-    }] };
-
-    // Match target path
-    query.$and = query.$and.concat(conditions);
-
-    return query;
-};
-
 // Export the mongoose plugin
 module.exports = function(schema, options) {
     options = options || {};
@@ -50,9 +29,9 @@ module.exports = function(schema, options) {
                     // Awaiting more official way to obtain reference to model.
                     // https://github.com/Automattic/mongoose/issues/3430
                     var model = doc.model(doc.constructor.modelName);
-                    var query = buildQuery(conditions, doc._id);
-                    model.findOne(query, function(err, document) {
-                        respond(!document);
+                    var query = { $and: conditions };
+                    model.where(query).count(function(err, count) {
+                        respond(((doc.isNew && count === 0) || (!doc.isNew && count === 1)));
                     });
                 }, pathMessage);
             });
