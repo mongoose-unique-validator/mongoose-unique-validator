@@ -60,7 +60,7 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
-        it('does not validate saving self', function(done) {
+        it('does not throw error when saving self', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 
             var user = new User(helpers.USERS[0]);
@@ -92,7 +92,7 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
-        it('does not validate saving self (with custom _id field)', function(done) {
+        it('does not throw error when saving self (with custom _id field)', function(done) {
             var Planet = mongoose.model('Planet', helpers.createCustomIdSchema().plugin(uniqueValidator));
 
             var planet = new Planet({ _id: 'mercury' });
