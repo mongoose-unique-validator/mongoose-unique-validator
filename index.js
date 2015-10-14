@@ -10,29 +10,33 @@ module.exports = function(schema, options) {
         var indexOptions = index[1];
 
         if (indexOptions.unique) {
-            paths.forEach(function(path) {
+            paths.forEach(function(pathName) {
                 var pathMessage = message;
                 if (typeof indexOptions.unique === 'string') {
                     pathMessage = indexOptions.unique;
                 }
 
-                schema.path(path).validate(function(value, respond) {
-                    var doc = this;
+                var path = schema.path(pathName);
 
-                    var conditions = [];
-                    paths.forEach(function(path) {
-                        var condition = {};
-                        condition[path] = doc[path];
-                        conditions.push(condition);
-                    });
+                if (path) {
+                    path.validate(function(value, respond) {
+                        var doc = this;
 
-                    // Awaiting more official way to obtain reference to model.
-                    // https://github.com/Automattic/mongoose/issues/3430
-                    var model = doc.model(doc.constructor.modelName);
-                    model.where({ $and: conditions }).count(function(err, count) {
-                        respond(((doc.isNew && count === 0) || (!doc.isNew && count <= 1)));
-                    });
-                }, pathMessage);
+                        var conditions = [];
+                        paths.forEach(function(name) {
+                            var condition = {};
+                            condition[name] = doc[name];
+                            conditions.push(condition);
+                        });
+
+                        // Awaiting more official way to obtain reference to model.
+                        // https://github.com/Automattic/mongoose/issues/3430
+                        var model = doc.model(doc.constructor.modelName);
+                        model.where({ $and: conditions }).count(function(err, count) {
+                            respond(((doc.isNew && count === 0) || (!doc.isNew && count <= 1)));
+                        });
+                    }, pathMessage);
+                }
             });
         }
     });
