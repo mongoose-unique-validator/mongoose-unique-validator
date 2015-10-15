@@ -170,5 +170,26 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('throws error for single index violation (case insensitive)', function(done) {
+            var User = mongoose.model('User', helpers.createUserCaseInsensitiveSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                var user = new User(helpers.USERS[0]);
+                user.email = user.email.toUpperCase();
+
+                // Try saving a duplicate
+                user.save().catch(function(err) {
+                    expect(err.errors.email.message).to.equal('Error, expected `email` to be unique. Value: `JOHN.SMITH@GMAIL.COM`');
+                    expect(err.errors.email.properties.type).to.equal('user defined');
+                    expect(err.errors.email.properties.path).to.equal('email');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };

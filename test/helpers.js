@@ -37,6 +37,24 @@ module.exports = {
         });
     },
 
+    createUserCaseInsensitiveSchema: function() {
+        return new mongoose.Schema({
+            username: {
+                type: String,
+                unique: true
+            },
+            email: {
+                type: String,
+                index: true,
+                unique: true,
+                uniqueCaseInsensitive: true
+            },
+            password: {
+                type: String
+            }
+        });
+    },
+
     createCustomUserSchema: function() {
         return new mongoose.Schema({
             username: {
