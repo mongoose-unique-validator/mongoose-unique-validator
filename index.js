@@ -25,7 +25,12 @@ module.exports = function(schema, options) {
                         var conditions = [];
                         paths.forEach(function(name) {
                             var condition = {};
-                            condition[name] = doc[name];
+                            if (path.options && path.options.uniqueCaseInsensitive) {
+                                condition[name] = new RegExp('^' + doc[name] + '$', 'i');
+                            } else {
+                                condition[name] = doc[name];
+                            }
+
                             conditions.push(condition);
                         });
 

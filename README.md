@@ -87,3 +87,17 @@ You have access to all of the standard Mongoose error message templating:
 *   `{PATH}`
 *   `{VALUE}`
 *   `{TYPE}`
+
+
+Case Insensitive
+---------------------
+
+You can add `uniqueCaseInsensitive` option to the key. Then `john.smith@gmail.com` and `John.Smith@gmail.com` will be treated as duplicates.
+
+```js
+var userSchema = mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    email: { type: String, index: true, unique: true, required: true, uniqueCaseInsensitive: true },
+    password: { type: String, required: true }
+});
+```
