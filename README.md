@@ -73,6 +73,28 @@ user.save(function (err) {
 }
 ```
 
+Find + Updates
+--------------
+
+When using `findOneAndUpdate` and related methods, mongoose doesn't automatically run validation. To trigger this,
+you need to pass a configuration object. For technical reasons, this plugin requires that you also set the context
+option to `query`.
+
+`{ runValidators: true, context: 'query' }`
+
+A full example:
+
+```js
+User.findOneAndUpdate(
+    { email: 'old-email@example.com' },
+    { email: 'new-email@example.com' },
+    { runValidators: true, context: 'query' },
+    function(err) {
+        // ...
+    }
+)
+```
+
 Custom Error Messages
 ---------------------
 
@@ -92,7 +114,7 @@ You have access to all of the standard Mongoose error message templating:
 Case Insensitive
 ---------------------
 
-You can add `uniqueCaseInsensitive` option to the key. Then `john.smith@gmail.com` and `John.Smith@gmail.com` will be treated as duplicates.
+For case-insensitive matches, include the `uniqueCaseInsensitive` option in your schema. Queries will treat `john.smith@gmail.com` and `John.Smith@gmail.com` as duplicates.
 
 ```js
 var userSchema = mongoose.Schema({

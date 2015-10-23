@@ -33,6 +33,6 @@
     "mocha": "^2.3.3"
   },
   "peerDependencies": {
-    "mongoose": "^4.1.10"
+    "mongoose": "^4.2.2"
   }
 }

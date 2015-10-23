@@ -92,6 +92,25 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('does not throw error when saving self with new unique value via findOneAndUpdate', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            var user = new User(helpers.USERS[0]);
+
+            // Save a user
+            var promise = user.save();
+            promise.then(function() {
+                User.findOneAndUpdate(
+                    { email: helpers.USERS[0].email },
+                    { email: 'somethingNew@example.com' },
+                    { runValidators: true, context: 'query' }
+                ).exec().then(function() {
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
         it('throws error when saving self with new duplicate value', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 
@@ -101,6 +120,27 @@ module.exports = function(mongoose) {
                 user.save().catch(done).then(function() {
                     user.email = helpers.USERS[0].email;
                     user.save().catch(function(err) {
+                        expect(err).is.not.null;
+
+                        done();
+                    });
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('throws error when saving self with new duplicate value via findOneAndUpdate', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                var user = new User(helpers.USERS[1]);
+                user.save().catch(done).then(function() {
+                    User.findOneAndUpdate(
+                        { email: helpers.USERS[0].email },
+                        { email: helpers.USERS[1].email },
+                        { runValidators: true, context: 'query' }
+                    ).exec().catch(function(err) {
                         expect(err).is.not.null;
 
                         done();

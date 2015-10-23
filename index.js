@@ -34,9 +34,15 @@ module.exports = function(schema, options) {
                             conditions.push(condition);
                         });
 
-                        // Awaiting more official way to obtain reference to model.
+                        // Obtain the model depending on context
                         // https://github.com/Automattic/mongoose/issues/3430
-                        var model = doc.model(doc.constructor.modelName);
+                        var model;
+                        if (doc.constructor.name === 'Query') {
+                            model = doc.model;
+                        } else {
+                            model = doc.model(doc.constructor.modelName);
+                        }
+
                         model.where({ $and: conditions }).count(function(err, count) {
                             respond(((doc.isNew && count === 0) || (!doc.isNew && count <= 1)));
                         });
