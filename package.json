@@ -17,10 +17,12 @@
     "email": "haswell00@gmail.com",
     "url": "http://blakehaswell.com/"
   },
-  "contributors": [{
-    "name": "Mike Botsko",
-    "email": "botsko@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Mike Botsko",
+      "email": "botsko@gmail.com"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -34,5 +36,8 @@
   },
   "peerDependencies": {
     "mongoose": "^4.2.2"
+  },
+  "dependencies": {
+    "lodash.get": "^3.7.0"
   }
 }

@@ -1,5 +1,7 @@
 'use strict';
 
+var get = require('lodash.get');
+
 // Export the mongoose plugin
 module.exports = function(schema, options) {
     options = options || {};
@@ -24,12 +26,17 @@ module.exports = function(schema, options) {
 
                         var conditions = [];
                         paths.forEach(function(name) {
-                            var condition = {};
+                            var pathValue = get(doc, name);
+
+                            // Wrap with case-insensitivity
                             if (path.options && path.options.uniqueCaseInsensitive) {
-                                condition[name] = new RegExp('^' + doc[name] + '$', 'i');
+                                pathValue = new RegExp('^' + pathValue + '$', 'i');
                             } else {
-                                condition[name] = doc[name];
+                                pathValue = pathValue;
                             }
+
+                            var condition = {};
+                            condition[name] = pathValue;
 
                             conditions.push(condition);
                         });
