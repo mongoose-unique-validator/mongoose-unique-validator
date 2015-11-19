@@ -154,6 +154,25 @@ module.exports = {
         });
     },
 
+    createArrayOfNestedUserSchema: function() {
+        return new mongoose.Schema({
+            username: {
+                type: String,
+                unique: true
+            },
+            contacts: [{
+                email: {
+                    type: String,
+                    index: true,
+                    unique: true
+                }
+            }],
+            password: {
+                type: String
+            }
+        });
+    },
+
     USERS: [{
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',
