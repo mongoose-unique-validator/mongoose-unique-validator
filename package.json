@@ -35,7 +35,7 @@
     "mocha": "^2.3.3"
   },
   "peerDependencies": {
-    "mongoose": "^4.2.2"
+    "mongoose": "^4.2.8"
   },
   "dependencies": {
     "lodash.get": "^3.7.0"

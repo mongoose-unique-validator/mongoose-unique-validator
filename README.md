@@ -123,3 +123,13 @@ var userSchema = mongoose.Schema({
     password: { type: String, required: true }
 });
 ```
+
+
+Caveats
+-------
+
+Because we rely on async operations to verify whether a document exists in the database, it's possible for two queries to execute at the same time, both get 0 back, and then both insert into MongoDB.
+
+Outside of automatically locking the collection or forcing a single connection, there's no real solution.
+
+For most of our users this won't be a problem, but is an edge case to be aware of.

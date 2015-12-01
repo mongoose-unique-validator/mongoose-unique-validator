@@ -135,7 +135,7 @@ module.exports = {
         });
     },
 
-    createNestedUserSchema: function() {
+    createNestedFieldUserSchema: function() {
         return new mongoose.Schema({
             username: {
                 type: String,
@@ -171,6 +171,31 @@ module.exports = {
                 type: String
             }
         });
+    },
+
+    createNestedUserSchema: function(uniqueValidator) {
+        var ContactSchema = new mongoose.Schema({
+            email: {
+                type: String,
+                index: true,
+                unique: true,
+                required: true
+            }
+        });
+
+        var Schema = new mongoose.Schema({
+            username: {
+                type: String,
+                unique: true
+            },
+            contact: ContactSchema,
+            password: {
+                type: String
+            }
+        });
+        Schema.plugin(uniqueValidator);
+
+        return Schema;
     },
 
     USERS: [{

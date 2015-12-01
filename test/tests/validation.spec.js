@@ -233,7 +233,7 @@ module.exports = function(mongoose) {
         });
 
         it('throws error for single nested index violation', function(done) {
-            var User = mongoose.model('User', helpers.createNestedUserSchema().plugin(uniqueValidator));
+            var User = mongoose.model('User', helpers.createNestedFieldUserSchema().plugin(uniqueValidator));
 
             var nestedUser = {
                 username: 'JohnSmith',
@@ -280,6 +280,33 @@ module.exports = function(mongoose) {
                 // Try saving a duplicate
                 new User(otherNestedUser).save().catch(function(err) {
                     expect(err.errors['contact.email'].message).to.equal('Error, expected `contact.email` to be unique. Value: `john.smith@gmail.com`');
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('throws error for nested schema index violation', function(done) {
+            var User = mongoose.model('User', helpers.createNestedUserSchema(uniqueValidator));
+
+            var nestedUser = {
+                username: 'JohnSmith',
+                contact: { email: 'john.smith@gmail.com' },
+                password: 'j0hnNYb0i'
+            };
+
+            var otherNestedUser = {
+                username: 'BobSmith',
+                contact: { email: 'john.smith@gmail.com' },
+                password: 'j0hnNYb0i'
+            };
+
+            // Save the first user
+            var promise = new User(nestedUser).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(otherNestedUser).save().catch(function(err) {
+                    expect(err.errors['contact.email'].message).to.equal('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
                     done();
                 });
             });
