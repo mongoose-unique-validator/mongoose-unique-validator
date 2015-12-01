@@ -260,7 +260,7 @@ module.exports = function(mongoose) {
         });
 
         it('throws error for index violation in an array of nested objects', function(done) {
-            var User = mongoose.model('User', helpers.createNestedUserSchema().plugin(uniqueValidator));
+            var User = mongoose.model('User', helpers.createNestedFieldUserSchema().plugin(uniqueValidator));
 
             var nestedUser = {
                 username: 'JohnSmith',
