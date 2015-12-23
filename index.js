@@ -2,6 +2,10 @@
 
 var get = require('lodash.get');
 
+var escapeRegExp = function(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+};
+
 var deepPath = function(schema, pathName) {
     var path;
     var paths = pathName.split('.');
@@ -60,7 +64,7 @@ module.exports = function(schema, options) {
 
                             // Wrap with case-insensitivity
                             if (path.options && path.options.uniqueCaseInsensitive) {
-                                pathValue = new RegExp('^' + pathValue + '$', 'i');
+                                pathValue = new RegExp('^' + escapeRegExp(pathValue) + '$', 'i');
                             } else {
                                 pathValue = pathValue;
                             }
