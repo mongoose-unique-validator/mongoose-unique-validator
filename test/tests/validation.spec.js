@@ -121,6 +121,7 @@ module.exports = function(mongoose) {
                     user.email = helpers.USERS[0].email;
                     user.save().catch(function(err) {
                         expect(err).is.not.null;
+                        expect(err.message).to.equal('User validation failed');
 
                         done();
                     });
@@ -142,6 +143,7 @@ module.exports = function(mongoose) {
                         { runValidators: true, context: 'query' }
                     ).exec().catch(function(err) {
                         expect(err).is.not.null;
+                        expect(err.message).to.equal('Validation failed');
 
                         done();
                     });
@@ -178,6 +180,7 @@ module.exports = function(mongoose) {
                 // Try saving a duplicate
                 new Planet({ _id: 'mercury' }).save().catch(function(err) {
                     expect(err).is.not.null;
+                    expect(err.message).to.equal('Planet validation failed');
 
                     done();
                 });
@@ -224,6 +227,7 @@ module.exports = function(mongoose) {
                 // Try saving a unique student without a username
                 new Student(helpers.USERS[5]).save().catch(function(err) {
                     expect(err).is.not.null;
+                    expect(err.message).to.equal('Student validation failed');
                     done();
                 });
             });

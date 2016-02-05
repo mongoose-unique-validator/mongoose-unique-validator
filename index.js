@@ -52,10 +52,18 @@ module.exports = function(schema, options) {
                     path.validate(function(value, respond) {
                         var doc = this;
                         var isSubdocument = typeof doc.ownerDocument === 'function';
+                        var parent = isSubdocument ? doc.ownerDocument() : doc;
 
                         var conditions = [];
                         paths.forEach(function(name) {
-                            var pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
+                            var pathValue;
+
+                            // If the doc is a query, this is a findAndUpdate
+                            if (doc.constructor.name === 'Query') {
+                                pathValue = get(doc, '_update.' + name);
+                            } else {
+                                pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
+                            }
 
                             // Wrap with case-insensitivity
                             if (path.options && path.options.uniqueCaseInsensitive) {
@@ -70,7 +78,7 @@ module.exports = function(schema, options) {
                             conditions.push(condition);
                         });
 
-                        if (doc._id) {
+                        if (!parent.isNew && doc._id) {
                             conditions.push({ _id: { $ne: doc._id } });
                         }
 

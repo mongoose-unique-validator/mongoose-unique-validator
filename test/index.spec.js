@@ -12,4 +12,8 @@ mongoose.connection.on('error', function() {
 describe('Mongoose Unique Validator', function() {
     require('./tests/validation.spec')(mongoose);
     require('./tests/messages.spec')(mongoose);
+
+    after(function() {
+        mongoose.connection.db.dropDatabase();
+    });
 });
