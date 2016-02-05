@@ -150,6 +150,25 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('throws error when validating self with new duplicate value', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            // Save first record
+            new User(helpers.USERS[0]).save().catch(done).then(function() {
+                // Save second record
+                var user = new User(helpers.USERS[1]);
+                user.save().catch(done).then(function() {
+                    // Try updating this record with an existing email
+                    user.email = helpers.USERS[0].email;
+                    user.validate().catch(function(err) {
+                        expect(err).to.be.an('object');
+                        expect(err.message).to.equal('User validation failed');
+                        done();
+                    });
+                });
+            });
+        });
+
         it('throws error on unique violation for custom _id field', function(done) {
             var Planet = mongoose.model('Planet', helpers.createCustomIdSchema().plugin(uniqueValidator));
 

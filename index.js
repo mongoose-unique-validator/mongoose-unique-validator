@@ -52,7 +52,6 @@ module.exports = function(schema, options) {
                     path.validate(function(value, respond) {
                         var doc = this;
                         var isSubdocument = typeof doc.ownerDocument === 'function';
-                        var parent = isSubdocument ? doc.ownerDocument() : doc;
 
                         var conditions = [];
                         paths.forEach(function(name) {
@@ -71,6 +70,10 @@ module.exports = function(schema, options) {
                             conditions.push(condition);
                         });
 
+                        if (doc._id) {
+                            conditions.push({ _id: { $ne: doc._id } });
+                        }
+
                         // Obtain the model depending on context
                         // https://github.com/Automattic/mongoose/issues/3430
                         // https://github.com/Automattic/mongoose/issues/3589
@@ -84,7 +87,7 @@ module.exports = function(schema, options) {
                         }
 
                         model.where({ $and: conditions }).count(function(err, count) {
-                            respond(((parent.isNew && count === 0) || (!parent.isNew && count <= 1)));
+                            respond(count === 0);
                         });
                     }, pathMessage);
                 }
