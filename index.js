@@ -68,8 +68,6 @@ module.exports = function(schema, options) {
                             // Wrap with case-insensitivity
                             if (path.options && path.options.uniqueCaseInsensitive) {
                                 pathValue = new RegExp('^' + pathValue + '$', 'i');
-                            } else {
-                                pathValue = pathValue;
                             }
 
                             var condition = {};
