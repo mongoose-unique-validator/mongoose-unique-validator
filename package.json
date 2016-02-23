@@ -38,6 +38,7 @@
     "mongoose": "^4.2.8"
   },
   "dependencies": {
+    "lodash.foreach": "^4.1.0",
     "lodash.get": "^4.0.2"
   }
 }

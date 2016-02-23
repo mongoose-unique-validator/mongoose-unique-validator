@@ -1,5 +1,6 @@
 'use strict';
 
+var each = require('lodash.foreach');
 var get = require('lodash.get');
 
 var deepPath = function(schema, pathName) {
@@ -52,14 +53,16 @@ module.exports = function(schema, options) {
                     path.validate(function(value, respond) {
                         var doc = this;
                         var isSubdocument = typeof doc.ownerDocument === 'function';
-                        var parent = isSubdocument ? doc.ownerDocument() : doc;
+                        var isQuery = doc.constructor.name === 'Query';
+                        var parentDoc = isSubdocument ? doc.ownerDocument() : doc;
+                        var isNew = parentDoc.isNew || !isQuery;
 
                         var conditions = [];
                         paths.forEach(function(name) {
                             var pathValue;
 
                             // If the doc is a query, this is a findAndUpdate
-                            if (doc.constructor.name === 'Query') {
+                            if (isQuery) {
                                 pathValue = get(doc, '_update.' + name);
                             } else {
                                 pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
@@ -76,8 +79,17 @@ module.exports = function(schema, options) {
                             conditions.push(condition);
                         });
 
-                        if (!parent.isNew && doc._id) {
-                            conditions.push({ _id: { $ne: doc._id } });
+                        if (!isNew) {
+                            // Use conditions the user has with find*AndUpdate
+                            if (isQuery) {
+                                each(doc._conditions, function(value, key) {
+                                    var cond = {};
+                                    cond[key] = { $ne: value };
+                                    conditions.push(cond);
+                                });
+                            } else if (doc._id) {
+                                conditions.push({ _id: { $ne: doc._id } });
+                            }
                         }
 
                         // Obtain the model depending on context

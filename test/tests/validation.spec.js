@@ -85,7 +85,8 @@ module.exports = function(mongoose) {
             var promise = user.save();
             promise.then(function() {
                 user.email = 'somethingNew@example.com';
-                user.save().catch(done).then(function() {
+                user.save().catch(done).then(function(result) {
+                    expect(result).to.be.an('object');
                     done();
                 });
             });
@@ -102,9 +103,10 @@ module.exports = function(mongoose) {
             promise.then(function() {
                 User.findOneAndUpdate(
                     { email: helpers.USERS[0].email },
-                    { email: 'somethingNew@example.com' },
+                    { email: 'somethingNew@example.com', username: 'JohnSmith' },
                     { runValidators: true, context: 'query' }
-                ).exec().then(function() {
+                ).exec().catch(done).then(function(result) {
+                    expect(result).to.be.an('object');
                     done();
                 });
             });
