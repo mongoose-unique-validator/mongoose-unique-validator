@@ -113,6 +113,26 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('does not throw error when saving self with new unique value via findById', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            var user = new User(helpers.USERS[0]);
+
+            // Save a user
+            var promise = user.save();
+            promise.then(function() {
+                User.findById(user._id).then(function(foundUser) {
+                    foundUser.email = 'somethingNew@example.com';
+                    foundUser.username = 'JohnSmith';
+                    foundUser.save().then(function(result) {
+                        expect(result).to.be.an('object');
+                        done();
+                    }).catch(done);
+                });
+            });
+            promise.catch(done);
+        });
+
         it('throws error when saving self with new duplicate value', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 

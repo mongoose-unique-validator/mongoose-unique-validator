@@ -55,7 +55,7 @@ module.exports = function(schema, options) {
                         var isSubdocument = typeof doc.ownerDocument === 'function';
                         var isQuery = doc.constructor.name === 'Query';
                         var parentDoc = isSubdocument ? doc.ownerDocument() : doc;
-                        var isNew = parentDoc.isNew || !isQuery;
+                        var isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
 
                         var conditions = [];
                         paths.forEach(function(name) {
