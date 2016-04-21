@@ -70,6 +70,7 @@ module.exports = function(schema, options) {
 
                             // Wrap with case-insensitivity
                             if (path.options && path.options.uniqueCaseInsensitive) {
+                                pathValue = pathValue.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
                                 pathValue = new RegExp('^' + pathValue + '$', 'i');
                             }
 
