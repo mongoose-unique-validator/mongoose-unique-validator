@@ -218,6 +218,6 @@ module.exports = {
         username: 'JohnSmith'
     }, {
         email: 'john.smith+1@gmail.com',
-        username: 'JohnSmith'
+        username: 'JohnSmithAlias'
     }]
 };
