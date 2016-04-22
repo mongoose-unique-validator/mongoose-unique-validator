@@ -357,5 +357,22 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('throws error for string with regExp like symbols', function(done) {
+            var User = mongoose.model('User', helpers.createUserCaseInsensitiveSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            // Users email contains regExp like symbol "+"
+            var promise = new User(helpers.USERS[6]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS[6]).save().catch(function(err) {
+                    expect(err.errors.email.message).to.equal('Error, expected `email` to be unique. Value: `john.smith+1@gmail.com`');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };
