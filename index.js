@@ -73,8 +73,7 @@ module.exports = function(schema, options) {
                             if (path.options && path.options.uniqueCaseInsensitive) {
                                 // Excaping some symbols to make sure that some
                                 // symbols will not be interpretated as regExp expression
-                                pathValue = escapeRegExp(pathValue);
-                                pathValue = new RegExp('^' + pathValue + '$', 'i');
+                                pathValue = new RegExp('^' + escapeRegExp(pathValue) + '$', 'i');
                             }
 
                             var condition = {};
