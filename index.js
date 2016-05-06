@@ -63,6 +63,7 @@ module.exports = function(schema, options) {
                     var isQuery = doc.constructor.name === 'Query';
                     var parentDoc = isSubdocument ? doc.ownerDocument() : doc;
                     var isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
+                    
                     var conditions = [];
                     paths.forEach(function(name) {
                         var pathValue;
@@ -83,7 +84,6 @@ module.exports = function(schema, options) {
                             pathValue = mongoose.Types.ObjectId(pathValue.toString());
                         }
 
-                        console.log(name, pathValue);
                         var condition = {};
                         condition[name] = pathValue;
                         conditions.push(condition);
@@ -116,7 +116,6 @@ module.exports = function(schema, options) {
                     }
 
                     model.where({ $and: conditions }).count(function(err, count) {
-                        console.log(count)
                         respond(count === 0);
                     });
                 }, pathMessage);
