@@ -2,7 +2,7 @@
 
 var each = require('lodash.foreach');
 var get = require('lodash.get');
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
 
 var deepPath = function(schema, pathName) {
     var path;
@@ -42,7 +42,7 @@ module.exports = function(schema, options) {
             }
 
             var pathsObjects = [];
-            paths.map(function(pathName){
+            paths.map(function(pathName) {
                 // Obtain the correct path object
                 var path = deepPath(schema, pathName);
 
@@ -63,7 +63,6 @@ module.exports = function(schema, options) {
                     var isQuery = doc.constructor.name === 'Query';
                     var parentDoc = isSubdocument ? doc.ownerDocument() : doc;
                     var isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
-                    
                     var conditions = [];
                     paths.forEach(function(name) {
                         var pathValue;
@@ -80,8 +79,10 @@ module.exports = function(schema, options) {
                             pathValue = new RegExp('^' + pathValue + '$', 'i');
                         }
 
-                        if(typeof pathValue === 'object' && mongoose.Types.ObjectId.isValid(pathValue.toString())){
-                            pathValue = mongoose.Types.ObjectId(pathValue.toString());
+                        // If type of value is object and it is a valid ObjectId, parse it
+                        var typeObjectId = mongoose.Types.ObjectId;
+                        if (typeof pathValue === 'object' && typeObjectId.isValid(pathValue.toString())) {
+                            pathValue = typeObjectId(pathValue.toString());
                         }
 
                         var condition = {};
