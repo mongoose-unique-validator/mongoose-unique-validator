@@ -90,6 +90,9 @@ module.exports = function(schema, options) {
                         conditions.push(condition);
                     });
 
+                    if(indexOptions.partialFilterExpression) {
+                        conditions.push(indexOptions.partialFilterExpression);
+                    }
 
                     if (!isNew) {
                         // Use conditions the user has with find*AndUpdate
