@@ -60,6 +60,39 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('throws error for compound filtered index violation', function(done) {
+            var User = mongoose.model('User', helpers.createCustomCompoundFilteredIndexSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS[0]).save().catch(function(err) {
+                    expect(err.errors.default.message).to.equal('Only one default email permited.');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('only one error for compound index violation', function(done) {
+            var schema = helpers.createCustomCompoundIndexSchema().plugin(uniqueValidator);
+            var User = mongoose.model('User', schema);
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS[0]).save().catch(function(err) {
+                    expect(err.errors.email).to.equal(undefined);
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
         it('does not throw error when saving self', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 

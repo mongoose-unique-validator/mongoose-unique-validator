@@ -91,6 +91,28 @@ module.exports = {
         return schema;
     },
 
+    createCustomCompoundFilteredIndexSchema: function() {
+        var schema = new mongoose.Schema({
+            username: {
+                type: String
+            },
+            email: {
+                type: String,
+                index: true
+            },
+            password: {
+                type: String
+            },
+            default: {
+                type: Boolean
+            }
+        });
+
+        schema.index({ default: 1, email: 1 },{ unique: 'Only one default email permited.', partialFilterExpression: { default: true }});
+
+        return schema;
+    },
+
     createCustomCompoundIndexSchema: function() {
         var schema = new mongoose.Schema({
             username: {
@@ -201,20 +223,26 @@ module.exports = {
     USERS: [{
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',
-        password: 'j0hnNYb0i'
+        password: 'j0hnNYb0i',
+        default: true
     }, {
         username: 'Robert Miller',
         email: 'bob@robertmiller.com',
-        password: '@b0B#b0B$b0B%'
-    }, {
-        email: 'john.smith@gmail.com'
-    }, {
-        email: 'bob@robertmiller.com'
+        password: '@b0B#b0B$b0B%',
+        default: true
     }, {
         email: 'john.smith@gmail.com',
-        username: 'JohnSmith'
+        default: true
+    }, {
+        email: 'bob@robertmiller.com',
+        default: true
+    }, {
+        email: 'john.smith@gmail.com',
+        username: 'JohnSmith',
+        default: true
     }, {
         email: 'john.smith2000@gmail.com',
-        username: 'JohnSmith'
+        username: 'JohnSmith',
+        default: true
     }]
 };
