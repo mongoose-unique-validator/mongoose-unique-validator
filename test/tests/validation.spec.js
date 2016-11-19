@@ -31,11 +31,11 @@ module.exports = function(mongoose) {
                 // Try saving a duplicate
                 new User(helpers.USERS[0]).save().catch(function(err) {
                     expect(err.errors.username.message).to.equal('Error, expected `username` to be unique. Value: `JohnSmith`');
-                    expect(err.errors.username.properties.type).to.equal('user defined');
+                    expect(err.errors.username.properties.type).to.equal('unique');
                     expect(err.errors.username.properties.path).to.equal('username');
 
                     expect(err.errors.email.message).to.equal('Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
-                    expect(err.errors.email.properties.type).to.equal('user defined');
+                    expect(err.errors.email.properties.type).to.equal('unique');
                     expect(err.errors.email.properties.path).to.equal('email');
 
                     done();
@@ -268,7 +268,7 @@ module.exports = function(mongoose) {
                 // Try saving a duplicate
                 user.save().catch(function(err) {
                     expect(err.errors.email.message).to.equal('Error, expected `email` to be unique. Value: `JOHN.SMITH@GMAIL.COM`');
-                    expect(err.errors.email.properties.type).to.equal('user defined');
+                    expect(err.errors.email.properties.type).to.equal('unique');
                     expect(err.errors.email.properties.path).to.equal('email');
 
                     done();

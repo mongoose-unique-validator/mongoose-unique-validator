@@ -33,8 +33,8 @@ module.exports = function(mongoose) {
             promise.then(function() {
                 // Try saving a duplicate
                 new User(helpers.USERS[0]).save().catch(function(err) {
-                    expect(err.errors.username.message).to.equal('Path: username, value: JohnSmith, type: user defined');
-                    expect(err.errors.email.message).to.equal('Path: email, value: john.smith@gmail.com, type: user defined');
+                    expect(err.errors.username.message).to.equal('Path: username, value: JohnSmith, type: unique');
+                    expect(err.errors.email.message).to.equal('Path: email, value: john.smith@gmail.com, type: unique');
 
                     done();
                 });
