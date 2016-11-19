@@ -8,15 +8,16 @@ module.exports = {
         var collections = Object.keys(mongoose.connection.collections);
         var l = collections.length;
         collections.forEach(function(coll) {
-            mongoose.connection.collections[coll].remove();
-            l--;
+            mongoose.connection.collections[coll].remove(function() {
+                l--;
 
-            if (!l) {
-                mongoose.models = {};
-                mongoose.modelSchemas = {};
-                mongoose.connection.models = {};
-                done();
-            }
+                if (!l) {
+                    mongoose.models = {};
+                    mongoose.modelSchemas = {};
+                    mongoose.connection.models = {};
+                    done();
+                }
+            });
         });
     },
 
