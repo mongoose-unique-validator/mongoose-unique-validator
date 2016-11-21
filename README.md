@@ -66,7 +66,7 @@ user.save(function (err) {
             message: 'Validator failed for path `username` with value `JohnSmith`',
             name: 'ValidatorError',
             path: 'username',
-            type: 'user defined',
+            type: 'unique',
             value: 'JohnSmith'
         }
     }
@@ -93,6 +93,33 @@ User.findOneAndUpdate(
         // ...
     }
 )
+```
+
+Custom Error Types
+------------------
+
+You can pass through a custom error type as part of the optional `options` argument:
+
+```js
+userSchema.plugin(uniqueValidator, { type: 'mongoose-unique-validator' });
+```
+
+After running the above example the output will be:
+
+```js
+{
+    message: 'Validation failed',
+    name: 'ValidationError',
+    errors: {
+        username: {
+            message: 'Validator failed for path `username` with value `JohnSmith`',
+            name: 'ValidatorError',
+            path: 'username',
+            type: 'mongoose-unique-validator',
+            value: 'JohnSmith'
+        }
+    }
+}
 ```
 
 Custom Error Messages

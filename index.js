@@ -25,6 +25,7 @@ var deepPath = function(schema, pathName) {
 // Export the mongoose plugin
 module.exports = function(schema, options) {
     options = options || {};
+    var type = options.type || 'unique';
     var message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
 
     // Dynamically iterate all indexes
@@ -107,7 +108,7 @@ module.exports = function(schema, options) {
                         model.where({ $and: conditions }).count(function(err, count) {
                             respond(count === 0);
                         });
-                    }, pathMessage);
+                    }, pathMessage, type);
                 }
             });
         }
