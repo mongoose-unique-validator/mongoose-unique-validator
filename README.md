@@ -63,10 +63,10 @@ user.save(function (err) {
     name: 'ValidationError',
     errors: {
         username: {
-            message: 'Validator failed for path `username` with value `JohnSmith`',
+            message: 'Error, expected `username` to be unique. Value: `JohnSmith`',
             name: 'ValidatorError',
+            kind: 'unique',
             path: 'username',
-            type: 'unique',
             value: 'JohnSmith'
         }
     }
@@ -112,10 +112,10 @@ After running the above example the output will be:
     name: 'ValidationError',
     errors: {
         username: {
-            message: 'Validator failed for path `username` with value `JohnSmith`',
+            message: 'Error, expected `username` to be unique. Value: `JohnSmith`',
             name: 'ValidatorError',
+            kind: 'mongoose-unique-validator',
             path: 'username',
-            type: 'mongoose-unique-validator',
             value: 'JohnSmith'
         }
     }
