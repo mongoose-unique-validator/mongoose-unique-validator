@@ -31,11 +31,11 @@
   "devDependencies": {
     "bluebird": "^3.2.2",
     "chai": "^3.3.0",
-    "eslint": "^1.6.0",
-    "mocha": "^2.3.3"
+    "eslint": "^3.10.2",
+    "mocha": "^3.1.2"
   },
   "peerDependencies": {
-    "mongoose": "^4.2.8"
+    "mongoose": "^4.6.8"
   },
   "dependencies": {
     "lodash.foreach": "^4.1.0",
