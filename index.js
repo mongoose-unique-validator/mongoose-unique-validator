@@ -64,7 +64,7 @@ module.exports = function(schema, options) {
 
                             // If the doc is a query, this is a findAndUpdate
                             if (isQuery) {
-                                pathValue = get(doc, '_update.' + name);
+                                pathValue = get(doc, '_update.' + name) || get(doc, '_update.$set.' + name);
                             } else {
                                 pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
                             }
