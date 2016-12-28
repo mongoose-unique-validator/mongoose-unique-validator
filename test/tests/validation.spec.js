@@ -174,6 +174,32 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('throws error when saving self with new duplicate value via findOneAndUpdate using $set', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                var user = new User(helpers.USERS[1]);
+                user.save().catch(done).then(function() {
+                    User.findOneAndUpdate(
+                        { email: helpers.USERS[0].email },
+                        {
+                            $set: {
+                                email: helpers.USERS[1].email
+                            }
+                        },
+                        { runValidators: true, context: 'query' }
+                    ).exec().catch(function(err) {
+                        expect(err).is.not.null;
+                        expect(err.message).to.equal('Validation failed');
+
+                        done();
+                    });
+                });
+            });
+            promise.catch(done);
+        });
+
         it('throws error when validating self with new duplicate value', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 
