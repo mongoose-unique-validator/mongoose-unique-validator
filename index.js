@@ -83,7 +83,7 @@ module.exports = function(schema, options) {
                         if (!isNew) {
                             // Use conditions the user has with find*AndUpdate
                             if (isQuery) {
-                                each(doc._conditions, function(value, key) {
+                                each(doc._conditions, function(val, key) {
                                     var cond = {};
                                     cond[key] = { $ne: value };
                                     conditions.push(cond);
