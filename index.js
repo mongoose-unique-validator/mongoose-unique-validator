@@ -2,6 +2,7 @@
 
 var each = require('lodash.foreach');
 var get = require('lodash.get');
+var escapeRegExp = require('lodash.escaperegexp');
 
 var deepPath = function(schema, pathName) {
     var path;
@@ -71,7 +72,9 @@ module.exports = function(schema, options) {
 
                             // Wrap with case-insensitivity
                             if (path.options && path.options.uniqueCaseInsensitive) {
-                                pathValue = new RegExp('^' + pathValue + '$', 'i');
+                                // Excaping some symbols to make sure that some
+                                // symbols will not be interpretated as regExp expression
+                                pathValue = new RegExp('^' + escapeRegExp(pathValue) + '$', 'i');
                             }
 
                             var condition = {};
