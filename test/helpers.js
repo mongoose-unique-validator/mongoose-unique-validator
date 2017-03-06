@@ -217,5 +217,8 @@ module.exports = {
     }, {
         email: 'john.smith2000@gmail.com',
         username: 'JohnSmith'
+    }, {
+        email: 'john.smith+1@gmail.com', // valid email alias
+        username: 'JohnSmithAlias'
     }]
 };
