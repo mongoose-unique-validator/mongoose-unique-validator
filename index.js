@@ -51,62 +51,65 @@ module.exports = function(schema, options) {
 
                 if (path) {
                     // Add an async validator
-                    path.validate(function(value, respond) {
+                    path.validate(function() {
                         var doc = this;
-                        var isSubdocument = typeof doc.ownerDocument === 'function';
-                        var isQuery = doc.constructor.name === 'Query';
-                        var parentDoc = isSubdocument ? doc.ownerDocument() : doc;
-                        var isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
 
-                        var conditions = [];
-                        paths.forEach(function(name) {
-                            var pathValue;
+                        return new Promise(function(resolve) {
+                            var isSubdocument = typeof doc.ownerDocument === 'function';
+                            var isQuery = doc.constructor.name === 'Query';
+                            var parentDoc = isSubdocument ? doc.ownerDocument() : doc;
+                            var isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
 
-                            // If the doc is a query, this is a findAndUpdate
-                            if (isQuery) {
-                                pathValue = get(doc, '_update.' + name) || get(doc, '_update.$set.' + name);
-                            } else {
-                                pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
+                            var conditions = [];
+                            paths.forEach(function(name) {
+                                var pathValue;
+
+                                // If the doc is a query, this is a findAndUpdate
+                                if (isQuery) {
+                                    pathValue = get(doc, '_update.' + name) || get(doc, '_update.$set.' + name);
+                                } else {
+                                    pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
+                                }
+
+                                // Wrap with case-insensitivity
+                                if (path.options && path.options.uniqueCaseInsensitive) {
+                                    pathValue = new RegExp('^' + pathValue + '$', 'i');
+                                }
+
+                                var condition = {};
+                                condition[name] = pathValue;
+
+                                conditions.push(condition);
+                            });
+
+                            if (!isNew) {
+                                // Use conditions the user has with find*AndUpdate
+                                if (isQuery) {
+                                    each(doc._conditions, function(value, key) {
+                                        var cond = {};
+                                        cond[key] = { $ne: value };
+                                        conditions.push(cond);
+                                    });
+                                } else if (doc._id) {
+                                    conditions.push({ _id: { $ne: doc._id } });
+                                }
                             }
 
-                            // Wrap with case-insensitivity
-                            if (path.options && path.options.uniqueCaseInsensitive) {
-                                pathValue = new RegExp('^' + pathValue + '$', 'i');
+                            // Obtain the model depending on context
+                            // https://github.com/Automattic/mongoose/issues/3430
+                            // https://github.com/Automattic/mongoose/issues/3589
+                            var model;
+                            if (doc.constructor.name === 'Query') {
+                                model = doc.model;
+                            } else if (isSubdocument) {
+                                model = doc.ownerDocument().model(doc.ownerDocument().constructor.modelName);
+                            } else if (typeof doc.model === 'function') {
+                                model = doc.model(doc.constructor.modelName);
                             }
 
-                            var condition = {};
-                            condition[name] = pathValue;
-
-                            conditions.push(condition);
-                        });
-
-                        if (!isNew) {
-                            // Use conditions the user has with find*AndUpdate
-                            if (isQuery) {
-                                each(doc._conditions, function(value, key) {
-                                    var cond = {};
-                                    cond[key] = { $ne: value };
-                                    conditions.push(cond);
-                                });
-                            } else if (doc._id) {
-                                conditions.push({ _id: { $ne: doc._id } });
-                            }
-                        }
-
-                        // Obtain the model depending on context
-                        // https://github.com/Automattic/mongoose/issues/3430
-                        // https://github.com/Automattic/mongoose/issues/3589
-                        var model;
-                        if (doc.constructor.name === 'Query') {
-                            model = doc.model;
-                        } else if (isSubdocument) {
-                            model = doc.ownerDocument().model(doc.ownerDocument().constructor.modelName);
-                        } else if (typeof doc.model === 'function') {
-                            model = doc.model(doc.constructor.modelName);
-                        }
-
-                        model.where({ $and: conditions }).count(function(err, count) {
-                            respond(count === 0);
+                            model.where({ $and: conditions }).count(function(err, count) {
+                                resolve(count === 0);
+                            });
                         });
                     }, pathMessage, type);
                 }

@@ -35,7 +35,7 @@
     "mocha": "^3.1.2"
   },
   "peerDependencies": {
-    "mongoose": "^4.6.8"
+    "mongoose": "^4.9.0"
   },
   "dependencies": {
     "lodash.foreach": "^4.1.0",
