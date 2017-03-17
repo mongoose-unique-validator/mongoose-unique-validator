@@ -3,8 +3,6 @@
 var each = require('lodash.foreach');
 var get = require('lodash.get');
 
-var Promise = require('bluebird');
-
 var deepPath = function(schema, pathName) {
     var path;
     var paths = pathName.split('.');
