@@ -106,7 +106,11 @@ module.exports = function(schema, options) {
                             } else if (typeof doc.model === 'function') {
                                 model = doc.model(doc.constructor.modelName);
                             }
-
+                            
+                            if (!model){
+                                //console.log("Cannot validate unique values in .insertMany, passing...")
+                                resolve(true);
+                            } 
                             model.where({ $and: conditions }).count(function(err, count) {
                                 resolve(count === 0);
                             });
