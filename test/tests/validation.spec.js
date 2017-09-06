@@ -143,7 +143,7 @@ module.exports = function(mongoose) {
                     user.email = helpers.USERS[0].email;
                     user.save().catch(function(err) {
                         expect(err).is.not.null;
-                        expect(err.message).to.equal('User validation failed');
+                        expect(err.message).to.equal('User validation failed: email: Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
 
                         done();
                     });
@@ -165,7 +165,7 @@ module.exports = function(mongoose) {
                         { runValidators: true, context: 'query' }
                     ).exec().catch(function(err) {
                         expect(err).is.not.null;
-                        expect(err.message).to.equal('Validation failed');
+                        expect(err.message).to.equal('Validation failed: email: Error, expected `email` to be unique. Value: `bob@robertmiller.com`');
 
                         done();
                     });
@@ -191,7 +191,7 @@ module.exports = function(mongoose) {
                         { runValidators: true, context: 'query' }
                     ).exec().catch(function(err) {
                         expect(err).is.not.null;
-                        expect(err.message).to.equal('Validation failed');
+                        expect(err.message).to.equal('Validation failed: email: Error, expected `email` to be unique. Value: `bob@robertmiller.com`');
 
                         done();
                     });
@@ -212,7 +212,7 @@ module.exports = function(mongoose) {
                     user.email = helpers.USERS[0].email;
                     user.validate().catch(function(err) {
                         expect(err).to.be.an('object');
-                        expect(err.message).to.equal('User validation failed');
+                        expect(err.message).to.equal('User validation failed: email: Error, expected `email` to be unique. Value: `john.smith@gmail.com`');
                         done();
                     });
                 });
@@ -228,7 +228,7 @@ module.exports = function(mongoose) {
                 // Try saving a duplicate
                 new Planet({ _id: 'mercury' }).save().catch(function(err) {
                     expect(err).is.not.null;
-                    expect(err.message).to.equal('Planet validation failed');
+                    expect(err.message).to.equal('Planet validation failed: _id: Error, expected `_id` to be unique. Value: `mercury`');
 
                     done();
                 });
@@ -275,7 +275,7 @@ module.exports = function(mongoose) {
                 // Try saving a unique student without a username
                 new Student(helpers.USERS[5]).save().catch(function(err) {
                     expect(err).is.not.null;
-                    expect(err.message).to.equal('Student validation failed');
+                    expect(err.message).to.equal('Student validation failed: username: Error, expected `username` to be unique. Value: `JohnSmith`');
                     done();
                 });
             });
