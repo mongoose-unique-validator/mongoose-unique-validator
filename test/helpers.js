@@ -92,6 +92,25 @@ module.exports = {
         return schema;
     },
 
+    createCaseInsensitiveCompoundIndexSchema: function() {
+        var schema = new mongoose.Schema({
+            username: {
+                type: String
+            },
+            email: {
+                type: String,
+                index: true
+            },
+            password: {
+                type: String
+            }
+        });
+
+        schema.index({ username: 1, email: 1 }, { unique: true, uniqueCaseInsensitive: true });
+
+        return schema;
+    },
+
     createCustomCompoundIndexSchema: function() {
         var schema = new mongoose.Schema({
             username: {

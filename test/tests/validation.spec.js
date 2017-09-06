@@ -415,5 +415,27 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('throws error for compound index violation (case insensitive)', function(done) {
+            var User = mongoose.model('User', helpers.createCaseInsensitiveCompoundIndexSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                var user = new User(helpers.USERS[0]);
+                user.email = user.email.toUpperCase();
+
+                // Try saving a duplicate
+                user.save().catch(function(err) {
+                    expect(err.errors.email.name).to.equal('ValidatorError');
+                    expect(err.errors.email.kind).to.equal('unique');
+                    expect(err.errors.email.path).to.equal('email');
+                    expect(err.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };

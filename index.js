@@ -72,7 +72,7 @@ module.exports = function(schema, options) {
                                 }
 
                                 // Wrap with case-insensitivity
-                                if (path.options && path.options.uniqueCaseInsensitive) {
+                                if (get(path, 'options.uniqueCaseInsensitive') || indexOptions.uniqueCaseInsensitive) {
                                     pathValue = new RegExp('^' + pathValue + '$', 'i');
                                 }
 
