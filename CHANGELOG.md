@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+- Adds support for `uniqueCaseInsensitive` on index options.
+
 ## 1.0.5
 
 - Updated validator to use a promise, as async validators are deprecated as of Mongoose 4.9.
