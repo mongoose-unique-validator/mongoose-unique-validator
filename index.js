@@ -1,17 +1,18 @@
-'use strict';
+const each = require('lodash.foreach');
+const get = require('lodash.get');
 
-var each = require('lodash.foreach');
-var get = require('lodash.get');
+// Function typecheck helper
+const isFunc = (val) => typeof val === 'function';
 
 var deepPath = function(schema, pathName) {
-    var path;
-    var paths = pathName.split('.');
+    let path;
+    const paths = pathName.split('.');
 
     if (paths.length > 1) {
         pathName = paths.shift();
     }
 
-    if (typeof schema.path === 'function') {
+    if (isFunc(schema.path)) {
         path = schema.path(pathName);
     }
 
@@ -25,50 +26,40 @@ var deepPath = function(schema, pathName) {
 // Export the mongoose plugin
 module.exports = function(schema, options) {
     options = options || {};
-    var type = options.type || 'unique';
-    var message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
+    const type = options.type || 'unique';
+    const message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
 
     // Dynamically iterate all indexes
-    schema.indexes().forEach(function(index) {
-        var indexOptions = index[1];
+    each(schema.indexes(), (index) => {
+        const indexOptions = index[1];
 
         if (indexOptions.unique) {
-            var paths = Object.keys(index[0]);
-            paths.forEach(function(pathName) {
+            const paths = Object.keys(index[0]);
+            each(paths, (pathName) => {
                 // Choose error message
-                var pathMessage = message;
-                if (typeof indexOptions.unique === 'string') {
-                    pathMessage = indexOptions.unique;
-                }
+                const pathMessage = typeof indexOptions.unique === 'string' ? indexOptions.unique : message;
 
                 // Obtain the correct path object
-                var path = deepPath(schema, pathName);
-
-                // Nested objects without schemas may be accessible this way
-                if (!path) {
-                    path = schema.path(pathName);
-                }
+                const path = deepPath(schema, pathName) || schema.path(pathName);
 
                 if (path) {
                     // Add an async validator
                     path.validate(function() {
-                        var doc = this;
+                        return new Promise((resolve) => {
+                            const isSubdocument = isFunc(this.ownerDocument);
+                            const isQuery = this.constructor.name === 'Query';
+                            const parentDoc = isSubdocument ? this.ownerDocument() : this;
+                            const isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
 
-                        return new Promise(function(resolve) {
-                            var isSubdocument = typeof doc.ownerDocument === 'function';
-                            var isQuery = doc.constructor.name === 'Query';
-                            var parentDoc = isSubdocument ? doc.ownerDocument() : doc;
-                            var isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
-
-                            var conditions = [];
-                            paths.forEach(function(name) {
-                                var pathValue;
+                            let conditions = [];
+                            each(paths, (name) => {
+                                let pathValue;
 
                                 // If the doc is a query, this is a findAndUpdate
                                 if (isQuery) {
-                                    pathValue = get(doc, '_update.' + name) || get(doc, '_update.$set.' + name);
+                                    pathValue = get(this, '_update.' + name) || get(this, '_update.$set.' + name);
                                 } else {
-                                    pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
+                                    pathValue = get(this, isSubdocument ? name.split('.').pop() : name);
                                 }
 
                                 // Wrap with case-insensitivity
@@ -76,38 +67,33 @@ module.exports = function(schema, options) {
                                     pathValue = new RegExp('^' + pathValue + '$', 'i');
                                 }
 
-                                var condition = {};
-                                condition[name] = pathValue;
-
-                                conditions.push(condition);
+                                conditions.push({ [name]: pathValue });
                             });
 
                             if (!isNew) {
                                 // Use conditions the user has with find*AndUpdate
                                 if (isQuery) {
-                                    each(doc._conditions, function(value, key) {
-                                        var cond = {};
-                                        cond[key] = { $ne: value };
-                                        conditions.push(cond);
+                                    each(this._conditions, (value, key) => {
+                                        conditions.push({ [key]: { $ne: value } });
                                     });
-                                } else if (doc._id) {
-                                    conditions.push({ _id: { $ne: doc._id } });
+                                } else if (this._id) {
+                                    conditions.push({ _id: { $ne: this._id } });
                                 }
                             }
 
                             // Obtain the model depending on context
                             // https://github.com/Automattic/mongoose/issues/3430
                             // https://github.com/Automattic/mongoose/issues/3589
-                            var model;
-                            if (doc.constructor.name === 'Query') {
-                                model = doc.model;
+                            let model;
+                            if (isQuery) {
+                                model = this.model;
                             } else if (isSubdocument) {
-                                model = doc.ownerDocument().model(doc.ownerDocument().constructor.modelName);
-                            } else if (typeof doc.model === 'function') {
-                                model = doc.model(doc.constructor.modelName);
+                                model = this.ownerDocument().model(this.ownerDocument().constructor.modelName);
+                            } else if (isFunc(this.model)) {
+                                model = this.model(this.constructor.modelName);
                             }
 
-                            model.where({ $and: conditions }).count(function(err, count) {
+                            model.where({ $and: conditions }).count((err, count) => {
                                 resolve(count === 0);
                             });
                         });

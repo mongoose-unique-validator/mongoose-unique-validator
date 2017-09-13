@@ -30,8 +30,8 @@
   },
   "devDependencies": {
     "bluebird": "^3.2.2",
-    "chai": "^3.3.0",
-    "eslint": "^3.10.2",
+    "chai": "^3.5.0",
+    "eslint": "^3.19.0",
     "mocha": "^3.1.2"
   },
   "peerDependencies": {
