@@ -12,9 +12,9 @@ from MongoDB.
 Usage
 -----
 
-```
-npm install mongoose-unique-validator
-```
+Yarn: `yarn add mongoose-unique-validator`
+
+NPM: `npm install --save mongoose-unique-validator`
 
 Then, simply apply the plugin to your schema:
 
