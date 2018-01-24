@@ -132,10 +132,6 @@ module.exports = {
 
     createCustomIdSchema: function() {
         return new mongoose.Schema({
-            _id: {
-                type: String,
-                unique: true
-            },
             position: Number
         });
     },

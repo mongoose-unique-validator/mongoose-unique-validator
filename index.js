@@ -4,7 +4,7 @@ const get = require('lodash.get');
 // Function typecheck helper
 const isFunc = (val) => typeof val === 'function';
 
-var deepPath = function(schema, pathName) {
+const deepPath = function(schema, pathName) {
     let path;
     const paths = pathName.split('.');
 
@@ -29,8 +29,12 @@ module.exports = function(schema, options) {
     const type = options.type || 'unique';
     const message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
 
+    // Mongoose Schema objects don't describe default _id indexes
+    // https://github.com/Automattic/mongoose/issues/5998
+    const indexes = [[{ _id: 1 }, { unique: true }]].concat(schema.indexes());
+
     // Dynamically iterate all indexes
-    each(schema.indexes(), (index) => {
+    each(indexes, (index) => {
         const indexOptions = index[1];
 
         if (indexOptions.unique) {
