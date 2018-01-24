@@ -16,7 +16,7 @@ Yarn: `yarn add mongoose-unique-validator`
 
 NPM: `npm install --save mongoose-unique-validator`
 
-Then, simply apply the plugin to your schema:
+Then, apply the plugin to your schema:
 
 ```js
 var mongoose = require('mongoose');
