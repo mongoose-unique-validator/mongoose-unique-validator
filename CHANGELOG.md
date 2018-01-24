@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0
+
+- Corrects handling of `_id` column index when used with Mongoose v5.
+- Removes tests/support for custom `_id` column unique indexes.
+
 ## 1.0.6
 
 - Adds support for `uniqueCaseInsensitive` on index options.
