@@ -78,11 +78,16 @@ module.exports = function(schema, options) {
                                 // Use conditions the user has with find*AndUpdate
                                 if (isQuery) {
                                     each(this._conditions, (value, key) => {
+                                        if(key === 'deleted') {
+                                            value = value['$ne'];
+                                        }
                                         conditions.push({ [key]: { $ne: value } });
                                     });
                                 } else if (this._id) {
                                     conditions.push({ _id: { $ne: this._id } });
                                 }
+                            }else{
+                                conditions.push({ deleted: { $ne: true } });
                             }
 
                             // Obtain the model depending on context
