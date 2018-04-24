@@ -1,3 +1,5 @@
+'use strict';
+
 const each = require('lodash.foreach');
 const get = require('lodash.get');
 
