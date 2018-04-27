@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+- Restores strict mode for backwards-compat with Node 4+.
+
 ## 2.0.0
 
 - Corrects handling of `_id` column index when used with Mongoose v5.
