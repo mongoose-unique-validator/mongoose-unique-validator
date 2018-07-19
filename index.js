@@ -99,7 +99,7 @@ module.exports = function(schema, options) {
                                 model = this.model(this.constructor.modelName);
                             }
 
-                            model.where({ $and: conditions }).count((err, count) => {
+                            model.where({ $and: conditions }).countDocuments((err, count) => {
                                 resolve(count === 0);
                             });
                         });
