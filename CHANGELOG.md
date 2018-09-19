@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+- Updates collection.count to collection.countDocuments for mongoose deprecation.
+
 ## 2.0.1
 
 - Restores strict mode for backwards-compat with Node 4+.
