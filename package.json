@@ -41,5 +41,13 @@
   "dependencies": {
     "lodash.foreach": "^4.1.0",
     "lodash.get": "^4.0.2"
-  }
+  },
+  "files": [
+      "index.js",
+      "package.json",
+      "yarn.lock",
+      "CHANGELOG.md",
+      "LICENSE",
+      "README.md"
+    ]
 }
