@@ -232,5 +232,15 @@ module.exports = {
     }, {
         email: 'john.smith2000@gmail.com',
         username: 'JohnSmith'
+    }],
+
+    USERS_REGEX: [{
+        username: 'JohnSmith0',
+        email: 'john0smith@gmail.com',
+        password: 'j0hnNYb0i0'
+    }, {
+        username: 'JohnSmith',
+        email: 'john.smith@gmail.com',
+        password: 'j0hnNYb0i'
     }]
 };

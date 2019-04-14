@@ -22,6 +22,21 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('allow unique records with regex wildcards', function(done) {
+            var User = mongoose.model('User', helpers.createUserCaseInsensitiveSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS_REGEX[0]).save();
+            promise.then(function() {
+                // Try saving a unique user with email that has a regex wildcard
+                new User(helpers.USERS_REGEX[1]).save().catch(done).then(function(res) {
+                    expect(res.email).to.equal(helpers.USERS_REGEX[1].email);
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
         it('throws error for single index violation', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 
