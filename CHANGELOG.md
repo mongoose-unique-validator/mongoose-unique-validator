@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3
+
+- Escapes regular expression characters when used with case-insensitive option.
+
 ## 2.0.2
 
 - Updates collection.count to collection.countDocuments for mongoose deprecation.
