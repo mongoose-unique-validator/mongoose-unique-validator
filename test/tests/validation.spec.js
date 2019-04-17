@@ -22,7 +22,7 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
-        it('allow unique records with regex wildcards', function(done) {
+        it('allows unique records with regex wildcards', function(done) {
             var User = mongoose.model('User', helpers.createUserCaseInsensitiveSchema().plugin(uniqueValidator));
 
             // Save the first user
