@@ -84,8 +84,12 @@ module.exports = function(schema, options) {
                                     each(this._conditions, (value, key) => {
                                         conditions[key] = { $ne: value };
                                     });
-                                } else if (this._id) {
+                                } else if (pathName !== '_id') {
+                                    // if it's not new then it always has _id
                                     conditions._id = { $ne: this._id };
+                                } else {
+                                    // if is not new and is not query and the pathName is _id then is the same document no need to check anything
+                                    return resolve(true);
                                 }
                             }
 
@@ -97,8 +101,9 @@ module.exports = function(schema, options) {
                                 model = this.model;
                             } else if (isSubdocument) {
                                 model = this.ownerDocument().model(this.ownerDocument().constructor.modelName);
-                            } else if (isFunc(this.model)) {
-                                model = this.model(this.constructor.modelName);
+                            } else if (this.constructor.modelName) {
+                                // if the constructor has modelName then the constructor is the model
+                                model = this.constructor;
                             }
 
                             // Is this model a discriminator and the unique index is on the whole collection,
