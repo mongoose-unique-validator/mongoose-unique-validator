@@ -58,7 +58,7 @@ module.exports = function(schema, options) {
                 const parentDoc = isSubdocument ? this.ownerDocument() : this;
                 const isNew = typeof parentDoc.isNew === "boolean" ? parentDoc.isNew : !isQuery;
 
-                const conditions = indexOptions.partialFilterExpression || {};
+                let conditions = {};
                 each(paths, name => {
                   let pathValue;
 
@@ -113,6 +113,7 @@ module.exports = function(schema, options) {
                 if (model.baseModelName && indexOptions.partialFilterExpression === null) {
                   model = model.db.model(model.baseModelName);
                 }
+                conditions = {$and: [conditions, indexOptions.partialFilterExpression || {}]};
 
                 model.find(conditions).countDocuments((err, count) => {
                   resolve(count === 0);
