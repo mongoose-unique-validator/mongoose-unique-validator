@@ -41,5 +41,23 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('uses custom type from default plugin configuration', function(done) {
+            uniqueValidator.defaults.type = 'mongoose-unique-validator';
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS[0]).save().catch(function(err) {
+                    expect(err.errors.username.kind).to.equal('mongoose-unique-validator');
+                    expect(err.errors.email.kind).to.equal('mongoose-unique-validator');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };

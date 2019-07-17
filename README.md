@@ -122,6 +122,12 @@ After running the above example the output will be:
 }
 ```
 
+You can also specify a default custom error type by overriding the plugin `defaults.type` variable:
+
+```js
+uniqueValidator.defaults.type = 'mongoose-unique-validator'
+```
+
 Custom Error Messages
 ---------------------
 
@@ -136,6 +142,12 @@ You have access to all of the standard Mongoose error message templating:
 *   `{PATH}`
 *   `{VALUE}`
 *   `{TYPE}`
+
+You can also specify a default custom error message by overriding the plugin `defaults.message` variable:
+
+```js
+uniqueValidator.defaults.message = 'Error, expected {PATH} to be unique.'
+```
 
 
 Case Insensitive

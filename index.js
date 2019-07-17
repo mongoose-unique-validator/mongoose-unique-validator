@@ -25,11 +25,10 @@ const deepPath = function(schema, pathName) {
     return path;
 };
 
-// Export the mongoose plugin
-module.exports = function(schema, options) {
+const plugin = function(schema, options) {
     options = options || {};
-    const type = options.type || 'unique';
-    const message = options.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
+    const type = options.type || plugin.defaults.type || 'unique';
+    const message = options.message || plugin.defaults.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
 
     // Mongoose Schema objects don't describe default _id indexes
     // https://github.com/Automattic/mongoose/issues/5998
@@ -118,3 +117,9 @@ module.exports = function(schema, options) {
         }
     });
 };
+
+plugin.defaults = {
+};
+
+// Export the mongoose plugin
+module.exports = plugin;
