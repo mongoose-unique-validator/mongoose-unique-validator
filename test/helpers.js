@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
+var uniqueValidator = require('../index.js');
 
 // Helper methods/objects for tests
 module.exports = {
@@ -19,6 +20,7 @@ module.exports = {
                 }
             });
         });
+        uniqueValidator.defaults = {};
     },
 
     createUserSchema: function() {
