@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "lodash.foreach": "^4.1.0",
-    "lodash.get": "^4.0.2"
+    "lodash.get": "^4.0.2",
+    "lodash.merge": "^4.6.2"
   },
   "files": [
     "index.js",
