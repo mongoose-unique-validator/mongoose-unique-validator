@@ -168,7 +168,7 @@ Additional Conditions
 
 For additional unique-constraint conditions (ex: only enforce unique constraint on non soft-deleted records), the MongoDB option `partialFilterExpression` can be used.
 
-Note: the option `index` must be passed as on object containing `unique: true`, or else `partialFilterExpression` will be ignored.
+Note: the option `index` must be passed as an object containing `unique: true`, or else `partialFilterExpression` will be ignored.
 
 ```js
 var userSchema = mongoose.Schema({
