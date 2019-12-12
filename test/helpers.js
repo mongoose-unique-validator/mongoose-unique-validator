@@ -75,6 +75,29 @@ module.exports = {
         });
     },
 
+    createUserPartialFilterExpressionSchema: function() {
+        return new mongoose.Schema({
+            username: {
+                type: String
+            },
+            email: {
+                type: String,
+                index: {
+                    unique: true,
+                    partialFilterExpression: {
+                        active: true
+                    }
+                }
+            },
+            password: {
+                type: String
+            },
+            active: {
+                type: Boolean
+            }
+        });
+    },
+
     createCompoundIndexSchema: function() {
         var schema = new mongoose.Schema({
             username: {
@@ -244,5 +267,25 @@ module.exports = {
         username: 'JohnSmith',
         email: 'john.smith@gmail.com',
         password: 'j0hnNYb0i'
-    }]
+    }],
+
+    USERS_PARTIAL_FILTER_EXPRESSION: [
+        {
+            username: 'JaneSmith',
+            email: 'jane.smith@gmail.com',
+            password: 'j4n3Ru13s',
+            active: true
+        }, {
+            username: 'Robert Miller',
+            email: 'bob@robertmiller.com',
+            password: '@b0B#b0B$b0B%',
+            active: true
+        },
+        {
+            username: 'JaneSmith',
+            email: 'jane.smith@gmail.com',
+            password: 'j4n3Ru13s',
+            active: false
+        }
+    ]
 };

@@ -2,6 +2,7 @@
 
 const each = require('lodash.foreach');
 const get = require('lodash.get');
+const merge = require('lodash.merge');
 
 // Function typecheck helper
 const isFunc = (val) => typeof val === 'function';
@@ -86,6 +87,10 @@ const plugin = function(schema, options) {
                                 } else if (this._id) {
                                     conditions._id = { $ne: this._id };
                                 }
+                            }
+
+                            if (indexOptions.partialFilterExpression) {
+                                merge(conditions, indexOptions.partialFilterExpression);
                             }
 
                             // Obtain the model depending on context

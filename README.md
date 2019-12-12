@@ -163,6 +163,27 @@ var userSchema = mongoose.Schema({
 });
 ```
 
+Additional Conditions
+---------------------
+
+For additional unique-constraint conditions (ex: only enforce unique constraint on non soft-deleted records), the MongoDB option `partialFilterExpression` can be used.
+
+Note: the option `index` must be passed as an object containing `unique: true`, or else `partialFilterExpression` will be ignored.
+
+```js
+var userSchema = mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    email: {
+        type: String,
+        required: true,
+        index: {
+            unique: true,
+            partialFilterExpression: { deleted: false }
+        } 
+    },
+    password: { type: String, required: true }
+});
+```
 
 Caveats
 -------

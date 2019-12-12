@@ -37,6 +37,20 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('allows unique records with partial filter expression', function(done) {
+            var User = mongoose.model('Employee', helpers.createUserPartialFilterExpressionSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS_PARTIAL_FILTER_EXPRESSION[0]).save();
+            promise.then(function() {
+                // Try saving a unique user
+                new User(helpers.USERS_PARTIAL_FILTER_EXPRESSION[1]).save().catch(done).then(function() {
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
         it('throws error for single index violation', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 
@@ -73,6 +87,25 @@ module.exports = function(mongoose) {
                     expect(err.errors.username.kind).to.equal('unique');
                     expect(err.errors.username.path).to.equal('username');
                     expect(err.errors.username.value).to.equal('JohnSmith');
+
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('throws an error for partial filter expression index violation', function(done) {
+            var User = mongoose.model('Employee', helpers.createUserPartialFilterExpressionSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS_PARTIAL_FILTER_EXPRESSION[0]).save();
+            promise.then(function() {
+                // Try saving a duplicate
+                new User(helpers.USERS_PARTIAL_FILTER_EXPRESSION[0]).save().catch(function(err) {
+                    expect(err.errors.email.name).to.equal('ValidatorError');
+                    expect(err.errors.email.kind).to.equal('unique');
+                    expect(err.errors.email.path).to.equal('email');
+                    expect(err.errors.email.value).to.equal('jane.smith@gmail.com');
 
                     done();
                 });
@@ -291,6 +324,20 @@ module.exports = function(mongoose) {
             promise.then(function() {
                 // Try saving a unique student without a username
                 new Student(helpers.USERS[3]).save().catch(done).then(function() {
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('does not throw error when using a partial filter expression', function(done) {
+            var User = mongoose.model('Employee', helpers.createUserPartialFilterExpressionSchema().plugin(uniqueValidator));
+
+            // Save the first (deactivated) user
+            var promise = new User(helpers.USERS_PARTIAL_FILTER_EXPRESSION[2]).save();
+            promise.then(function() {
+                // Try saving a the first user that has the same email, but is active
+                new User(helpers.USERS_PARTIAL_FILTER_EXPRESSION[0]).save().catch(done).then(function() {
                     done();
                 });
             });
