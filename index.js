@@ -58,7 +58,7 @@ const plugin = function(schema, options) {
 
                             const conditions = {};
 
-                            if (!isNew && !isQuery && !this.isModified(pathName)) {
+                            if (!isNew && !isQuery && !parentDoc.isModified(pathName)) {
                                 return resolve(true);
                             }
 
