@@ -47,6 +47,19 @@ var userSchema = mongoose.Schema({
 userSchema.plugin(uniqueValidator);
 ```
 
+Example with additional filter options
+-------
+
+Let's say you need to run additional filters while checking conditions for `unique` or `uniqueCaseInsensitive`. You can pass the additional filter options like below when you apply the plugin to schema.
+
+```js
+
+// below filter option will be applied to filter only the non soft deleted models while checking unique
+
+userSchema.plugin(uniqueValidator, {filter: { deleted: false }});
+
+```
+
 Now when you try to save a user, the unique validator will check for duplicate database entries and report them just
 like any other validation error:
 
