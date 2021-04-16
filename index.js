@@ -29,6 +29,7 @@ const deepPath = function(schema, pathName) {
 const plugin = function(schema, options) {
     options = options || {};
     const type = options.type || plugin.defaults.type || 'unique';
+    const additionalFilter = options.filters || {};
     const message = options.message || plugin.defaults.message || 'Error, expected `{PATH}` to be unique. Value: `{VALUE}`';
 
     // Mongoose Schema objects don't describe default _id indexes
@@ -112,7 +113,7 @@ const plugin = function(schema, options) {
                                 model = model.db.model(model.baseModelName);
                             }
 
-                            model.find(conditions).countDocuments((err, count) => {
+                            model.find({ ...conditions, ...additionalFilter }).countDocuments((err, count) => {
                                 resolve(count === 0);
                             });
                         });
