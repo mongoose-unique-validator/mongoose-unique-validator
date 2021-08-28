@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.4
+
+- Updated documentation
+- Updated dependencies
+
 ## 2.0.3
 
 - Escapes regular expression characters when used with case-insensitive option.

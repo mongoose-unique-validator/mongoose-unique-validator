@@ -21,12 +21,16 @@
     {
       "name": "Mike Botsko",
       "email": "botsko@gmail.com"
+    },
+    {
+      "name": "Erik Daut",
+      "email": "ndaut7@gmail.com"
     }
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/blakehaswell/mongoose-unique-validator.git"
+    "url": "https://github.com/vgdaut/mongoose-unique-validator.git"
   },
   "devDependencies": {
     "bluebird": "^3.5.4",
