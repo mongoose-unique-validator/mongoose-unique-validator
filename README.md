@@ -149,6 +149,17 @@ You can also specify a default custom error message by overriding the plugin `de
 uniqueValidator.defaults.message = 'Error, expected {PATH} to be unique.'
 ```
 
+You can pass through custom error messages individually by replacing ```true``` with the error message:
+
+```js
+new mongoose.Schema({
+    username: {
+        type: String,
+        unique: 'Username is already used.'
+    }
+});
+```
+
 
 Case Insensitive
 ---------------------
