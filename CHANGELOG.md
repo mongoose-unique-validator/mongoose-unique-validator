@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.4
+
+- Updates Mongoose dependency to 6.x.
+
 ## 2.0.3
 
 - Escapes regular expression characters when used with case-insensitive option.
