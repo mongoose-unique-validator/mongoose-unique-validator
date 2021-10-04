@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
+- Re-versions and deprecates v2.0.4 due to major mongoose version bump.
+
 ## 2.0.4
 
 - Updates Mongoose dependency to 6.x.
