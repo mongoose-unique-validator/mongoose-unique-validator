@@ -112,9 +112,24 @@ const plugin = function(schema, options) {
                                 model = model.db.model(model.baseModelName);
                             }
 
-                            model.find(conditions).countDocuments((err, count) => {
-                                resolve(count === 0);
-                            });
+                            // Skip, if only the _id field should be checked and it's a command on a existing document.
+                            let skip = false;
+                            if (!isNew && !isQuery) {
+                                const fieldsToCheck = Object.keys(conditions);
+
+                                if (fieldsToCheck.length === 1 && fieldsToCheck[0] === '_id') {
+                                    skip = true;
+                                }
+                            }
+
+                            if (skip) {
+                                resolve(true);
+                            } else {
+                                model.find(conditions).countDocuments((err, count) => {
+                                    resolve(count === 0);
+                                });
+                            }
+
                         });
                     }, pathMessage, type);
                 }
