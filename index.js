@@ -108,7 +108,7 @@ const plugin = function(schema, options) {
                             // Is this model a discriminator and the unique index is on the whole collection,
                             // not just the instances of the discriminator? If so, use the base model to query.
                             // https://github.com/Automattic/mongoose/issues/4965
-                            if (model.baseModelName && indexOptions.partialFilterExpression === null) {
+                            if (model.baseModelName && (indexOptions.partialFilterExpression === null || indexOptions.partialFilterExpression === undefined)) {
                                 model = model.db.model(model.baseModelName);
                             }
 
