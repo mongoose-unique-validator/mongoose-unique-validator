@@ -103,6 +103,8 @@ const plugin = function(schema, options) {
                                 model = this.ownerDocument().model(this.ownerDocument().constructor.modelName);
                             } else if (isFunc(this.model)) {
                                 model = this.model(this.constructor.modelName);
+                            } else {
+                                model = this.constructor.model(this.constructor.modelName);
                             }
 
                             // Is this model a discriminator and the unique index is on the whole collection,
