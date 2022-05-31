@@ -58,6 +58,11 @@ const plugin = function(schema, options) {
                             const isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
 
                             const conditions = {};
+
+                            if (!isNew && !isQuery && !parentDoc.isModified(pathName)) {
+                                return resolve(true);
+                            }
+
                             each(paths, (name) => {
                                 let pathValue;
 

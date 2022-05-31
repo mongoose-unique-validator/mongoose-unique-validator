@@ -166,6 +166,45 @@ module.exports = function(mongoose) {
             promise.catch(done);
         });
 
+        it('does not throw error when saving self with new unique value via findByIdAndUpdate', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            var user = new User(helpers.USERS[0]);
+
+            // Save a user
+            var promise = user.save();
+            promise.then(function() {
+                User.findByIdAndUpdate(
+                    user._id,
+                    { email: 'somethingNew@example.com', username: 'JohnSmith' },
+                    { runValidators: true, context: 'query' }
+                ).exec().catch(done).then(function(result) {
+                    expect(result).to.be.an('object');
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
+        // adresses https://github.com/blakehaswell/mongoose-unique-validator/issues/108
+        it('does not throw error when saving self with new unique value via findByIdAndUpdate with multiple records', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            // Save a user
+            var promise = User.insertMany([helpers.USERS[0], helpers.USERS[1]]);;
+            promise.then(function(createdUsers) {
+                User.findByIdAndUpdate(
+                    createdUsers[0]._id,
+                    { email: 'somethingNew@example.com', username: 'JohnSmith' },
+                    { runValidators: true, context: 'query' }
+                ).exec().catch(done).then(function(result) {
+                    expect(result).to.be.an('object');
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
+
         it('does not throw error when saving self with new unique value via findById', function(done) {
             var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
 
@@ -175,6 +214,25 @@ module.exports = function(mongoose) {
             var promise = user.save();
             promise.then(function() {
                 User.findById(user._id).then(function(foundUser) {
+                    foundUser.email = 'somethingNew@example.com';
+                    foundUser.username = 'JohnSmith';
+                    foundUser.save().then(function(result) {
+                        expect(result).to.be.an('object');
+                        done();
+                    }).catch(done);
+                });
+            });
+            promise.catch(done);
+        });
+
+        // adresses https://github.com/blakehaswell/mongoose-unique-validator/issues/108
+        it('does not throw error when saving self with new unique value via findById with multiple records', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            // Save a user
+            var promise = User.insertMany([helpers.USERS[0], helpers.USERS[1]]);
+            promise.then(function(createdUsers) {
+                User.findById(createdUsers[0]._id).then(function(foundUser) {
                     foundUser.email = 'somethingNew@example.com';
                     foundUser.username = 'JohnSmith';
                     foundUser.save().then(function(result) {
@@ -216,6 +274,30 @@ module.exports = function(mongoose) {
                 user.save().catch(done).then(function() {
                     User.findOneAndUpdate(
                         { email: helpers.USERS[0].email },
+                        { email: helpers.USERS[1].email },
+                        { runValidators: true, context: 'query' }
+                    ).exec().catch(function(err) {
+                        expect(err.errors.email.name).to.equal('ValidatorError');
+                        expect(err.errors.email.kind).to.equal('unique');
+                        expect(err.errors.email.path).to.equal('email');
+                        expect(err.errors.email.value).to.equal('bob@robertmiller.com');
+
+                        done();
+                    });
+                });
+            });
+            promise.catch(done);
+        });
+
+        it('throws error when saving self with new duplicate value via findByIdAndUpdate', function(done) {
+            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+
+            var promise = new User(helpers.USERS[0]).save();
+            promise.then(function(createdUser) {
+                var user = new User(helpers.USERS[1]);
+                user.save().catch(done).then(function() {
+                    User.findByIdAndUpdate(
+                        createdUser._id,
                         { email: helpers.USERS[1].email },
                         { runValidators: true, context: 'query' }
                     ).exec().catch(function(err) {
