@@ -31,7 +31,7 @@
   "devDependencies": {
     "bluebird": "^3.7.2",
     "chai": "^4.3.4",
-    "eslint": "^7.32.0",
+    "eslint": "^8.16.0",
     "mocha": "^9.1.2",
     "mongoose": "^6.0.0"
   },
