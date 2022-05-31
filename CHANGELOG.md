@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.0
+
+- Fixes "expected _id to be unique" errors.
+- Fixes error when `model` is the name of a field.
+
 ## 3.0.0
 
 - Re-versions and deprecates v2.0.4 due to major mongoose version bump.
