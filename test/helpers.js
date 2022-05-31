@@ -195,6 +195,16 @@ module.exports = {
         });
     },
 
+    createUniqueIDSchemaNonStrict: function() {
+        return new mongoose.Schema({
+            uid: {
+                type: 'String',
+                required: true,
+                unique: true
+            }
+        }, { strict: false });
+    },
+
     createArrayOfNestedUserSchema: function() {
         return new mongoose.Schema({
             username: {

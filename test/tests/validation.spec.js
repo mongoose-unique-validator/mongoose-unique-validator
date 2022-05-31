@@ -581,5 +581,24 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('does not throw error when create vs save data (with model field)', function(done) {
+            var UID = mongoose.model('UID', helpers.createUniqueIDSchemaNonStrict().plugin(uniqueValidator));
+
+            // Save the first user
+            const payloadWithModelField = {
+                uid: '12345',
+                model: 'some-value'
+            };
+
+            // perform a create() vs save()
+            var promise = UID.create(payloadWithModelField);
+            promise.then(function(res) {
+                expect(res.uid).to.equal(payloadWithModelField.uid);
+                expect(res.model).to.equal(payloadWithModelField.model);
+                done();
+            });
+            promise.catch(done);
+        });
     });
 };
