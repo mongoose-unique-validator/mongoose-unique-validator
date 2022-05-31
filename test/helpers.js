@@ -9,7 +9,7 @@ module.exports = {
         var collections = Object.keys(mongoose.connection.collections);
         var l = collections.length;
         collections.forEach(function(coll) {
-            mongoose.connection.collections[coll].remove(function() {
+            mongoose.connection.collections[coll].drop(function() {
                 l--;
 
                 if (!l) {

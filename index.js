@@ -131,8 +131,7 @@ const plugin = function(schema, options) {
     });
 };
 
-plugin.defaults = {
-};
+plugin.defaults = {};
 
 // Export the mongoose plugin
 module.exports = plugin;
