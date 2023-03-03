@@ -1,7 +1,6 @@
 'use strict';
 
 var mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
 
 // Connect
 mongoose.connect('mongodb://localhost/mongoose-unique-validator');
