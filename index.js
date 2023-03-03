@@ -51,7 +51,7 @@ const plugin = function(schema, options) {
                 if (path) {
                     // Add an async validator
                     path.validate(function() {
-                        return new Promise((resolve) => {
+                        return new Promise((resolve, reject) => {
                             const isSubdocument = isFunc(this.ownerDocument);
                             const isQuery = this.constructor.name === 'Query';
                             const parentDoc = isSubdocument ? this.ownerDocument() : this;
@@ -120,9 +120,9 @@ const plugin = function(schema, options) {
                                 model = model.db.model(model.baseModelName);
                             }
 
-                            model.find(conditions).countDocuments((err, count) => {
-                                resolve(count === 0);
-                            });
+                            model.find(conditions).countDocuments()
+                                .then((count) => { resolve(count === 0); })
+                                .catch((err) => { reject(err); });
                         });
                     }, pathMessage, type);
                 }
