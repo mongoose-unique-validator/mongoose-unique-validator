@@ -4,9 +4,13 @@ var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 // Connect
-mongoose.connect('mongodb://localhost/mongoose-unique-validator');
-mongoose.connection.on('error', function() {
-    throw new Error('Unable to connect to database.');
+mongoose.connect('mongodb://127.0.0.1:27017/mongoose-unique-validator').catch(err => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    throw err;
+}).then(() => {
+    // eslint-disable-next-line no-console
+    console.log('Connected to the database...');
 });
 
 describe('Mongoose Unique Validator', function() {
@@ -15,6 +19,6 @@ describe('Mongoose Unique Validator', function() {
     require('./tests/messages.spec')(mongoose);
 
     after(function() {
-        mongoose.connection.db.dropDatabase();
+        mongoose.connection.dropDatabase();
     });
 });
