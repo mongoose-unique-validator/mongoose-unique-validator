@@ -3,13 +3,9 @@
 var mongoose = require('mongoose');
 
 // Connect
-mongoose.connect('mongodb://127.0.0.1:27017/mongoose-unique-validator').catch(err => {
-    // eslint-disable-next-line no-console
-    console.error(err);
-    throw err;
-}).then(() => {
-    // eslint-disable-next-line no-console
-    console.log('Connected to the database...');
+mongoose.connect('mongodb://localhost/mongoose-unique-validator');
+mongoose.connection.on('error', function() {
+    throw new Error('Unable to connect to database.');
 });
 
 describe('Mongoose Unique Validator', function() {
