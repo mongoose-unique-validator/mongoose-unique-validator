@@ -51,65 +51,87 @@ const plugin = function(schema, options) {
                 if (path) {
                     // Add an async validator
                     path.validate(function() {
-                        return new Promise((resolve) => {
-                            const isSubdocument = isFunc(this.ownerDocument);
+                        return new Promise((resolve, reject) => {
                             const isQuery = this.constructor.name === 'Query';
-                            const parentDoc = isSubdocument ? this.ownerDocument() : this;
-                            const isNew = typeof parentDoc.isNew === 'boolean' ? parentDoc.isNew : !isQuery;
-
                             const conditions = {};
+                            let model;
 
-                            if (!isNew && !isQuery && !parentDoc.isModified(pathName)) {
-                                return resolve(true);
-                            }
+                            if (isQuery) {
+                                // If the doc is a query, this is a findAndUpdate.
+                                each(paths, (name) => {
+                                    let pathValue = get(this, '_update.' + name) || get(this, '_update.$set.' + name);
 
-                            each(paths, (name) => {
-                                let pathValue;
+                                    // Wrap with case-insensitivity
+                                    if (get(path, 'options.uniqueCaseInsensitive') || indexOptions.uniqueCaseInsensitive) {
+                                        // Escape RegExp chars
+                                        pathValue = pathValue.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+                                        pathValue = new RegExp('^' + pathValue + '$', 'i');
+                                    }
 
-                                // If the doc is a query, this is a findAndUpdate
-                                if (isQuery) {
-                                    pathValue = get(this, '_update.' + name) || get(this, '_update.$set.' + name);
-                                } else {
-                                    pathValue = get(this, isSubdocument ? name.split('.').pop() : name);
-                                }
+                                    conditions[name] = pathValue;
+                                });
 
-                                // Wrap with case-insensitivity
-                                if (get(path, 'options.uniqueCaseInsensitive') || indexOptions.uniqueCaseInsensitive) {
-                                    // Escape RegExp chars
-                                    pathValue = pathValue.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-                                    pathValue = new RegExp('^' + pathValue + '$', 'i');
-                                }
-
-                                conditions[name] = pathValue;
-                            });
-
-                            if (!isNew) {
                                 // Use conditions the user has with find*AndUpdate
-                                if (isQuery) {
-                                    each(this._conditions, (value, key) => {
-                                        conditions[key] = { $ne: value };
-                                    });
-                                } else if (this._id) {
+                                each(this._conditions, (value, key) => {
+                                    conditions[key] = { $ne: value };
+                                });
+
+                                model = this.model;
+                            } else {
+                                const parentDoc = this.parent();
+                                const isNew = parentDoc.isNew;
+
+                                if (!isNew && !parentDoc.isModified(pathName)) {
+                                    return resolve(true);
+                                }
+
+                                // https://mongoosejs.com/docs/subdocs.html#subdocuments-versus-nested-paths
+                                const isSubdocument = this._id !== parentDoc._id;
+                                const isNestedPath = isSubdocument ? false : pathName.split('.').length > 1;
+
+                                each(paths, (name) => {
+                                    let pathValue;
+                                    if (isSubdocument) {
+                                        pathValue = get(this, name.split('.').pop());
+                                    } else if (isNestedPath) {
+                                        const keys = name.split('.');
+                                        pathValue = get(this, keys[0]);
+                                        for (let i = 1; i < keys.length; i++) {
+                                            const key = keys[i];
+                                            pathValue = get(pathValue, key);
+                                        }
+                                    } else {
+                                        pathValue = get(this, name);
+                                    }
+
+                                    // Wrap with case-insensitivity
+                                    if (get(path, 'options.uniqueCaseInsensitive') || indexOptions.uniqueCaseInsensitive) {
+                                        // Escape RegExp chars
+                                        pathValue = pathValue.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+                                        pathValue = new RegExp('^' + pathValue + '$', 'i');
+                                    }
+
+                                    conditions[name] = pathValue;
+                                });
+
+                                if (!isNew && this._id) {
                                     conditions._id = { $ne: this._id };
+                                }
+
+                                // Obtain the model depending on context
+                                // https://github.com/Automattic/mongoose/issues/3430
+                                // https://github.com/Automattic/mongoose/issues/3589
+                                if (isSubdocument) {
+                                    model = this.ownerDocument().model(this.ownerDocument().constructor.modelName);
+                                } else if (isFunc(this.model)) {
+                                    model = this.model(this.constructor.modelName);
+                                } else {
+                                    model = this.constructor.model(this.constructor.modelName);
                                 }
                             }
 
                             if (indexOptions.partialFilterExpression) {
                                 merge(conditions, indexOptions.partialFilterExpression);
-                            }
-
-                            // Obtain the model depending on context
-                            // https://github.com/Automattic/mongoose/issues/3430
-                            // https://github.com/Automattic/mongoose/issues/3589
-                            let model;
-                            if (isQuery) {
-                                model = this.model;
-                            } else if (isSubdocument) {
-                                model = this.ownerDocument().model(this.ownerDocument().constructor.modelName);
-                            } else if (isFunc(this.model)) {
-                                model = this.model(this.constructor.modelName);
-                            } else {
-                                model = this.constructor.model(this.constructor.modelName);
                             }
 
                             // Is this model a discriminator and the unique index is on the whole collection,
@@ -120,9 +142,13 @@ const plugin = function(schema, options) {
                                 model = model.db.model(model.baseModelName);
                             }
 
-                            model.find(conditions).countDocuments((err, count) => {
-                                resolve(count === 0);
-                            });
+                            model.find(conditions).countDocuments()
+                                .then((count) => {
+                                    resolve(count === 0);
+                                })
+                                .catch((err) => {
+                                    reject(err);
+                                });
                         });
                     }, pathMessage, type);
                 }
