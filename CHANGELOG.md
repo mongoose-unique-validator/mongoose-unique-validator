@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0
+
+- Updates to mongoose 7
+
 ## 3.1.0
 
 - Fixes "expected _id to be unique" errors.
