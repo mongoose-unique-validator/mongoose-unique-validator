@@ -32,10 +32,10 @@
     "chai": "^4.3.4",
     "eslint": "^8.16.0",
     "mocha": "^10.2.0",
-    "mongoose": "^7.0.0"
+    "mongoose": "^8.0.0"
   },
   "peerDependencies": {
-    "mongoose": "^7.0.0"
+    "mongoose": "^8.0.0"
   },
   "dependencies": {
     "lodash.foreach": "^4.1.0",
