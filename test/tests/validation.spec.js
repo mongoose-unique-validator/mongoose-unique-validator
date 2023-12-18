@@ -365,7 +365,7 @@ module.exports = function(mongoose) {
 
         it('throws error on unique violation for custom _id field', function(done) {
             var Planet = mongoose.model('Planet', helpers.createCustomIdSchema().plugin(uniqueValidator));
-            var id = new mongoose.Types.ObjectId('aporfghtyuqi');
+            var id = new mongoose.Types.ObjectId(321);
 
             // Save the first user
             var promise = new Planet({ _id: id }).save();
@@ -385,7 +385,7 @@ module.exports = function(mongoose) {
         it('does not throw error when saving self (with custom _id field)', function(done) {
             var Planet = mongoose.model('Planet', helpers.createCustomIdSchema().plugin(uniqueValidator));
 
-            var planet = new Planet({ _id: new mongoose.Types.ObjectId('aporfghtyuqi') });
+            var planet = new Planet({ _id: new mongoose.Types.ObjectId(321) });
 
             // Save a user
             var promise = planet.save();
