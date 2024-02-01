@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0
+
+- Updates to mongoose 8
+
 ## 4.0
 
 - Updates to mongoose 7
