@@ -1,8 +1,6 @@
 mongoose-unique-validator
 =========================
 
-[![Build Status](https://travis-ci.org/blakehaswell/mongoose-unique-validator.svg)](https://travis-ci.org/blakehaswell/mongoose-unique-validator)
-
 mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.
 
 This makes error handling much easier, since you will get a Mongoose validation error when you attempt to violate a
@@ -19,10 +17,10 @@ NPM: `npm install --save mongoose-unique-validator`
 Then, apply the plugin to your schema:
 
 ```js
-var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
-var mySchema = mongoose.Schema(/* put your schema definition here */);
+const mySchema = mongoose.Schema(/* put your schema definition here */);
 mySchema.plugin(uniqueValidator);
 ```
 
@@ -33,11 +31,11 @@ Let’s say you have a user schema. You can easily add validation for the unique
 the `uniqueValidator` plugin to your user schema:
 
 ```js
-var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 // Define your schema as normal.
-var userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
     username: { type: String, required: true, unique: true },
     email: { type: String, index: true, unique: true, required: true },
     password: { type: String, required: true }
@@ -51,7 +49,7 @@ Now when you try to save a user, the unique validator will check for duplicate d
 like any other validation error:
 
 ```js
-var user = new User({ username: 'JohnSmith', email: 'john.smith@gmail.com', password: 'j0hnNYb0i' });
+const user = new User({ username: 'JohnSmith', email: 'john.smith@gmail.com', password: 'j0hnNYb0i' });
 user.save(function (err) {
     console.log(err);
 });
@@ -156,7 +154,7 @@ Case Insensitive
 For case-insensitive matches, include the `uniqueCaseInsensitive` option in your schema. Queries will treat `john.smith@gmail.com` and `John.Smith@gmail.com` as duplicates.
 
 ```js
-var userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
     username: { type: String, required: true, unique: true },
     email: { type: String, index: true, unique: true, required: true, uniqueCaseInsensitive: true },
     password: { type: String, required: true }
@@ -171,7 +169,7 @@ For additional unique-constraint conditions (ex: only enforce unique constraint 
 Note: the option `index` must be passed as an object containing `unique: true`, or else `partialFilterExpression` will be ignored.
 
 ```js
-var userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
     username: { type: String, required: true, unique: true },
     email: {
         type: String,
