@@ -78,7 +78,7 @@ const plugin = function(schema, options) {
 
                                 model = this.model;
                             } else {
-                                const parentDoc = this.parent();
+                                const parentDoc = this.$parent();
                                 const isNew = parentDoc.isNew;
 
                                 if (!isNew && !parentDoc.isModified(pathName)) {
