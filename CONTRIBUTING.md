@@ -5,9 +5,9 @@ We encourage pull requests, and will try our best to review and reply in a timel
 To develop:
 
 1. Clone the repository.
-2. Run `npm install`.
+2. Run `pnpm install`.
 3. Develop!
-4. Test with `npm test`.
+4. Test with `pnpm test`.
 
 PRs should meet a few simple guidelines:
 

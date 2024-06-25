@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.1
+
+- Fixes conflict when schemas define paths named `parent`.
+
 ## 5.0
 
 - Updates to mongoose 8
