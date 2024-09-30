@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.1
+
+- Backported fix for schema paths named `parent`
+
 ## 4.0
 
 - Updates to mongoose 7
