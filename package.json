@@ -38,10 +38,7 @@
     "mongoose": "^8.8.3"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
-    "lodash.foreach": "^4.5.0",
-    "lodash.get": "^4.4.2",
-    "lodash.merge": "^4.6.2"
+    "lodash-es": "^4.17.21"
   },
   "files": [
     "index.js",
