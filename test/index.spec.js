@@ -1,6 +1,9 @@
 'use strict';
 
-var mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import validation from "./tests/validation.spec.js"
+import types from "./tests/types.spec.js"
+import messages from "./tests/messages.spec.js"
 
 // Connect
 mongoose.connect('mongodb://127.0.0.1:27017/mongoose-unique-validator').catch(err => {
@@ -13,9 +16,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/mongoose-unique-validator').catch(er
 });
 
 describe('Mongoose Unique Validator', function() {
-    require('./tests/validation.spec')(mongoose);
-    require('./tests/types.spec.js')(mongoose);
-    require('./tests/messages.spec')(mongoose);
+    validation(mongoose);
+    types(mongoose);
+    messages(mongoose);
 
     after(function() {
         mongoose.connection.dropDatabase();
