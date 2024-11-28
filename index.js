@@ -1,8 +1,6 @@
 'use strict';
 
-const each = require('lodash.foreach');
-const get = require('lodash.get');
-const merge = require('lodash.merge');
+import { each, get, merge } from 'lodash-es';
 
 // Function typecheck helper
 const isFunc = (val) => typeof val === 'function';
@@ -158,6 +156,4 @@ const plugin = function(schema, options) {
 };
 
 plugin.defaults = {};
-
-// Export the mongoose plugin
-module.exports = plugin;
+export default plugin;

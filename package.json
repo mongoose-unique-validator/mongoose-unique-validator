@@ -3,6 +3,7 @@
   "version": "5.0.1",
   "description": "mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "mocha test --exit",
     "lint": "eslint index.js test"
@@ -29,18 +30,16 @@
     "url": "git+https://github.com/mongoose-unique-validator/mongoose-unique-validator.git"
   },
   "devDependencies": {
-    "chai": "^5.0.3",
-    "eslint": "^8.16.0",
-    "mocha": "^10.2.0",
-    "mongoose": "^8.0.0"
+    "chai": "^5.1.2",
+    "eslint": "^8.57.1",
+    "mocha": "^10.8.2",
+    "mongoose": "^8.8.3"
   },
   "peerDependencies": {
-    "mongoose": "^8.0.0"
+    "mongoose": "^8.8.3"
   },
   "dependencies": {
-    "lodash.foreach": "^4.1.0",
-    "lodash.get": "^4.0.2",
-    "lodash.merge": "^4.6.2"
+    "lodash-es": "^4.17.21"
   },
   "files": [
     "index.js",

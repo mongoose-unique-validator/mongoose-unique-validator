@@ -1,10 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var uniqueValidator = require('../index.js');
+import mongoose from 'mongoose';
+import uniqueValidator from '../index.js';
 
 // Helper methods/objects for tests
-module.exports = {
+export default {
     afterEach: function(done) {
         var collections = Object.keys(mongoose.connection.collections);
         var l = collections.length;

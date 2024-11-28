@@ -1,10 +1,10 @@
 'use strict';
 
-var helpers = require('../helpers');
-var expect = require('chai').expect;
-var uniqueValidator = require('../../index.js');
+import helpers from "../helpers.js"
+import { expect } from 'chai';
+import uniqueValidator from "../../index.js"
 
-module.exports = function(mongoose) {
+export default function(mongoose) {
     describe('Types', function() {
         afterEach(helpers.afterEach);
 
