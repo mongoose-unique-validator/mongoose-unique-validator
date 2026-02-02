@@ -58,23 +58,6 @@ module.exports = {
         });
     },
 
-    createCustomUserSchema: function() {
-        return new mongoose.Schema({
-            username: {
-                type: String,
-                unique: 'Username is already used.'
-            },
-            email: {
-                type: String,
-                index: true,
-                unique: 'It already exists.'
-            },
-            password: {
-                type: String
-            }
-        });
-    },
-
     createUserPartialFilterExpressionSchema: function() {
         return new mongoose.Schema({
             username: {
@@ -150,7 +133,7 @@ module.exports = {
             }
         });
 
-        schema.index({ username: 1, email: 1 }, { unique: 'Combo in use.' });
+        schema.index({ username: 1, email: 1 }, { unique: true });
 
         return schema;
     },
