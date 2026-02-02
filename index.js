@@ -114,8 +114,12 @@ const plugin = function(schema, options) {
                                     conditions[name] = pathValue;
                                 });
 
-                                if (!isNew && this._id) {
-                                    conditions._id = { $ne: this._id };
+                                // If we're not new, exclude our own record from the query
+                                if (!isNew) {
+                                    const ownerDocumentId = isSubdocument ? this.ownerDocument()._id : this._id;
+                                    if (ownerDocumentId) {
+                                        conditions._id = { $ne: ownerDocumentId };
+                                    }
                                 }
 
                                 // Obtain the model depending on context
