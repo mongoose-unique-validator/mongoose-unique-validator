@@ -1,11 +1,17 @@
 {
   "name": "mongoose-unique-validator",
   "version": "5.0.2",
+  "type": "module",
   "description": "mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "mocha test --exit",
-    "lint": "eslint index.js test"
+    "lint": "eslint . --ext .js,.cjs,.mjs,.ts",
+    "format": "prettier --write \"**/*.{js,css,cjs,mjs,ts}\"",
+    "prepare": "husky"
   },
   "keywords": [
     "mongoose",
@@ -13,14 +19,14 @@
     "validator"
   ],
   "author": {
-    "name": "Blake Haswell",
-    "email": "haswell00@gmail.com",
-    "url": "http://blakehaswell.com/"
+    "name": "Mike Botsko",
+    "email": "botsko@gmail.com"
   },
   "contributors": [
     {
-      "name": "Mike Botsko",
-      "email": "botsko@gmail.com"
+      "name": "Blake Haswell",
+      "email": "haswell00@gmail.com",
+      "url": "http://blakehaswell.com/"
     }
   ],
   "license": "MIT",
@@ -28,11 +34,25 @@
     "type": "git",
     "url": "git+https://github.com/mongoose-unique-validator/mongoose-unique-validator.git"
   },
+  "bugs": {
+    "url": "https://github.com/mongoose-unique-validator/mongoose-unique-validator/issues"
+  },
+  "homepage": "https://github.com/mongoose-unique-validator/mongoose-unique-validator#readme",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "chai": "^6.2.2",
-    "eslint": "^8.16.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "mocha": "^11.7.5",
-    "mongoose": "^8.0.0"
+    "mongoose": "^8.0.0",
+    "prettier": "^3.8.1"
   },
   "peerDependencies": {
     "mongoose": "^8.0.0"
@@ -45,7 +65,6 @@
   "files": [
     "index.js",
     "package.json",
-    "yarn.lock",
     "CHANGELOG.md",
     "LICENSE",
     "README.md"

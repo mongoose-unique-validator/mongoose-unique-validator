@@ -1,63 +1,79 @@
-'use strict';
+import uniqueValidator from '../../index.js'
+import * as helpers from '../helpers.js'
+import { expect } from 'chai'
 
-var helpers = require('../helpers');
-var expect = require('chai').expect;
-var uniqueValidator = require('../../index.js');
+export default function (mongoose) {
+  describe('Messages', function () {
+    afterEach(helpers.afterEachCommon)
 
-module.exports = function(mongoose) {
-    describe('Messages', function() {
-        afterEach(helpers.afterEach);
+    it('uses default validation message', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
 
-        it('uses default validation message', function(done) {
-            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+      // Save the first user
+      await new User(helpers.USERS[0]).save()
 
-            // Save the first user
-            var promise = new User(helpers.USERS[0]).save();
-            promise.then(function() {
-                // Try saving a duplicate
-                new User(helpers.USERS[0]).save().catch(function(err) {
-                    expect(err.errors.username.message).to.equal('Error, expected `username` to be unique. Value: `JohnSmith`');
-                    done();
-                });
-            });
-            promise.catch(done);
-        });
+      try {
+        await new User(helpers.USERS[0]).save()
 
-        it('uses custom message via options', function(done) {
-            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator, {
-                message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}'
-            }));
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.message).to.equal(
+          'Error, expected `username` to be unique. Value: `JohnSmith`'
+        )
+      }
+    })
 
-            // Save the first user
-            var promise = new User(helpers.USERS[0]).save();
-            promise.then(function() {
-                // Try saving a duplicate
-                new User(helpers.USERS[0]).save().catch(function(err) {
-                    expect(err.errors.username.message).to.equal('Path: username, value: JohnSmith, type: unique');
-                    expect(err.errors.email.message).to.equal('Path: email, value: john.smith@gmail.com, type: unique');
+    it('uses custom message via options', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator, {
+          message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}'
+        })
+      )
 
-                    done();
-                });
-            });
-            promise.catch(done);
-        });
+      // Save the first user
+      await new User(helpers.USERS[0]).save()
 
-        it('uses custom message from default plugin configuration', function(done) {
-            uniqueValidator.defaults.message = 'Path: {PATH}, value: {VALUE}, type: {TYPE}';
-            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+      try {
+        await new User(helpers.USERS[0]).save()
 
-            // Save the first user
-            var promise = new User(helpers.USERS[0]).save();
-            promise.then(function() {
-                // Try saving a duplicate
-                new User(helpers.USERS[0]).save().catch(function(err) {
-                    expect(err.errors.username.message).to.equal('Path: username, value: JohnSmith, type: unique');
-                    expect(err.errors.email.message).to.equal('Path: email, value: john.smith@gmail.com, type: unique');
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.message).to.equal(
+          'Path: username, value: JohnSmith, type: unique'
+        )
+        expect(err.errors.email.message).to.equal(
+          'Path: email, value: john.smith@gmail.com, type: unique'
+        )
+      }
+    })
 
-                    done();
-                });
-            });
-            promise.catch(done);
-        });
-    });
-};
+    it('uses custom message from default plugin configuration', async function () {
+      uniqueValidator.defaults.message =
+        'Path: {PATH}, value: {VALUE}, type: {TYPE}'
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
+
+      // Save the first user
+      await new User(helpers.USERS[0]).save()
+
+      try {
+        await new User(helpers.USERS[0]).save()
+
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.message).to.equal(
+          'Path: username, value: JohnSmith, type: unique'
+        )
+        expect(err.errors.email.message).to.equal(
+          'Path: email, value: john.smith@gmail.com, type: unique'
+        )
+      }
+    })
+  })
+}

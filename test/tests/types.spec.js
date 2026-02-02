@@ -1,63 +1,72 @@
-'use strict';
+import uniqueValidator from '../../index.js'
+import * as helpers from '../helpers.js'
+import { expect } from 'chai'
 
-var helpers = require('../helpers');
-var expect = require('chai').expect;
-var uniqueValidator = require('../../index.js');
+export default function (mongoose) {
+  describe('Types', function () {
+    afterEach(helpers.afterEachCommon)
 
-module.exports = function(mongoose) {
-    describe('Types', function() {
-        afterEach(helpers.afterEach);
+    it('uses default validation type', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
 
-        it('uses default validation type', function(done) {
-            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+      // Save the first user
+      await new User(helpers.USERS[0]).save()
 
-            // Save the first user
-            var promise = new User(helpers.USERS[0]).save();
-            promise.then(function() {
-                // Try saving a duplicate
-                new User(helpers.USERS[0]).save().catch(function(err) {
-                    expect(err.errors.username.kind).to.equal('unique');
-                    done();
-                });
-            });
-            promise.catch(done);
-        });
+      // Try saving a duplicate
+      try {
+        await new User(helpers.USERS[0]).save()
 
-        it('uses custom type via options', function(done) {
-            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator, {
-                type: 'mongoose-unique-validator'
-            }));
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.kind).to.equal('unique')
+      }
+    })
 
-            // Save the first user
-            var promise = new User(helpers.USERS[0]).save();
-            promise.then(function() {
-                // Try saving a duplicate
-                new User(helpers.USERS[0]).save().catch(function(err) {
-                    expect(err.errors.username.kind).to.equal('mongoose-unique-validator');
-                    expect(err.errors.email.kind).to.equal('mongoose-unique-validator');
+    it('uses custom type via options', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator, {
+          type: 'mongoose-unique-validator'
+        })
+      )
 
-                    done();
-                });
-            });
-            promise.catch(done);
-        });
+      // Save the first user
+      await new User(helpers.USERS[0]).save()
 
-        it('uses custom type from default plugin configuration', function(done) {
-            uniqueValidator.defaults.type = 'mongoose-unique-validator';
-            var User = mongoose.model('User', helpers.createUserSchema().plugin(uniqueValidator));
+      // Try saving a duplicate
+      try {
+        await new User(helpers.USERS[0]).save()
 
-            // Save the first user
-            var promise = new User(helpers.USERS[0]).save();
-            promise.then(function() {
-                // Try saving a duplicate
-                new User(helpers.USERS[0]).save().catch(function(err) {
-                    expect(err.errors.username.kind).to.equal('mongoose-unique-validator');
-                    expect(err.errors.email.kind).to.equal('mongoose-unique-validator');
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.kind).to.equal('mongoose-unique-validator')
+        expect(err.errors.email.kind).to.equal('mongoose-unique-validator')
+      }
+    })
 
-                    done();
-                });
-            });
-            promise.catch(done);
-        });
-    });
-};
+    it('uses custom type from default plugin configuration', async function () {
+      uniqueValidator.defaults.type = 'mongoose-unique-validator'
+
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
+
+      // Save the first user
+      await new User(helpers.USERS[0]).save()
+
+      // Try saving a duplicate
+      try {
+        await new User(helpers.USERS[0]).save()
+
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.kind).to.equal('mongoose-unique-validator')
+        expect(err.errors.email.kind).to.equal('mongoose-unique-validator')
+      }
+    })
+  })
+}

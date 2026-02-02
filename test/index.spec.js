@@ -1,23 +1,25 @@
-'use strict';
+import messagesSpec from './tests/messages.spec.js'
+import typesSpec from './tests/types.spec.js'
+import validationSpec from './tests/validation.spec.js'
+import mongoose from 'mongoose'
 
-var mongoose = require('mongoose');
+try {
+  await mongoose.connect('mongodb://127.0.0.1:27017/mongoose-unique-validator')
+  // eslint-disable-next-line no-undef
+  console.log('Connected to the database...')
+} catch (err) {
+  // eslint-disable-next-line no-undef
+  console.error(err)
 
-// Connect
-mongoose.connect('mongodb://127.0.0.1:27017/mongoose-unique-validator').catch(err => {
-    // eslint-disable-next-line no-console
-    console.error(err);
-    throw err;
-}).then(() => {
-    // eslint-disable-next-line no-console
-    console.log('Connected to the database...');
-});
+  throw err
+}
 
-describe('Mongoose Unique Validator', function() {
-    require('./tests/validation.spec')(mongoose);
-    require('./tests/types.spec.js')(mongoose);
-    require('./tests/messages.spec')(mongoose);
+describe('Mongoose Unique Validator', function () {
+  validationSpec(mongoose)
+  typesSpec(mongoose)
+  messagesSpec(mongoose)
 
-    after(function() {
-        mongoose.connection.dropDatabase();
-    });
-});
+  after(function () {
+    mongoose.connection.dropDatabase()
+  })
+})
