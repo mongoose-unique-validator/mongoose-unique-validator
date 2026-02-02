@@ -297,5 +297,22 @@ module.exports = {
             password: 'j4n3Ru13s',
             active: false
         }
+    ],
+
+    USERS_NESTED_ARRAY: [
+        {
+            username: 'JenSmith',
+            contacts: [
+                { email: 'jen.smith@gmail.com' }
+            ],
+            password: 'OMGitsJen'
+        },
+        {
+            username: 'SamSmith',
+            contacts: [
+                { email: 'sam.smith@gmail.com' }
+            ],
+            password: 'SamRules1000'
+        }
     ]
 };

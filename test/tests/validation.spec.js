@@ -600,5 +600,21 @@ module.exports = function(mongoose) {
             });
             promise.catch(done);
         });
+
+        it('does not throw when updating nested array values', function(done) {
+            var User = mongoose.model('User', helpers.createArrayOfNestedUserSchema().plugin(uniqueValidator));
+
+            // Save the first user
+            var promise = new User(helpers.USERS_NESTED_ARRAY[0]).save();
+
+            // Try updating nested array to check if the unique validator will ignore the doc currently being updated
+            promise.then(function(doc) {
+                doc.contacts = [helpers.USERS_NESTED_ARRAY[0].contacts[0], helpers.USERS_NESTED_ARRAY[1].contacts[0]];
+                doc.save().catch(done).then(function() {
+                    done();
+                });
+            });
+            promise.catch(done);
+        });
     });
 };
