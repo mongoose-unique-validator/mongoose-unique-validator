@@ -29,9 +29,9 @@
     "url": "git+https://github.com/mongoose-unique-validator/mongoose-unique-validator.git"
   },
   "devDependencies": {
-    "chai": "^5.0.3",
+    "chai": "^6.2.2",
     "eslint": "^8.16.0",
-    "mocha": "^10.2.0",
+    "mocha": "^11.7.5",
     "mongoose": "^8.0.0"
   },
   "peerDependencies": {
