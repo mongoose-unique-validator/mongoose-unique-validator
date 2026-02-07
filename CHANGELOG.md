@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.2
+
+- Fixes _id uniqueness check for ArraySubdocuments 
+
 ## 5.0.1
 
 - Fixes conflict when schemas define paths named `parent`.
