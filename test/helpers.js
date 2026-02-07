@@ -1,21 +1,18 @@
 import uniqueValidator from '../index.js'
 import mongoose from 'mongoose'
 
-export function afterEachCommon(done) {
+export async function afterEachCommon() {
   const collections = Object.keys(mongoose.connection.collections)
-  let l = collections.length
-  collections.forEach(function (coll) {
-    mongoose.connection.collections[coll].drop(function () {
-      l--
-
-      if (!l) {
-        mongoose.models = {}
-        mongoose.modelSchemas = {}
-        mongoose.connection.models = {}
-        done()
-      }
-    })
-  })
+  for (let coll of collections) {
+    try {
+      await mongoose.connection.collections[coll].deleteMany({})
+    } catch {
+      // Collection may not exist
+    }
+  }
+  mongoose.models = {}
+  mongoose.modelSchemas = {}
+  mongoose.connection.models = {}
   uniqueValidator.defaults = {}
 }
 
