@@ -937,6 +937,68 @@ export default function (mongoose) {
       }
     })
 
+    it('does not throw false positive when saving new standalone doc whose schema is also embedded in a plugin-bearing parent schema', async function () {
+      // Regression: plugin on ParentSchema added a validator to ChildSchema's
+      // shared path object with pathName='child.field'. When a standalone Child
+      // was saved, the validator queried { 'child.field': null } which matched
+      // all documents, producing a spurious uniqueness error.
+      const ChildSchema = new mongoose.Schema({ field: String })
+      ChildSchema.index({ field: 1 }, { unique: true })
+
+      const ParentSchema = new mongoose.Schema({ child: ChildSchema })
+      ParentSchema.plugin(uniqueValidator)
+
+      mongoose.model('Parent', ParentSchema)
+      const Child = mongoose.model('Child', ChildSchema)
+
+      // Save one child so the collection is non-empty
+      await new Child({ field: 'existing' }).save()
+
+      // Saving a new child with a different value must not throw
+      await new Child({ field: 'new' }).save()
+    })
+
+    it('does not throw false positive when updating a standalone doc whose schema is also embedded in a plugin-bearing parent schema', async function () {
+      // Regression: same shared-validator issue as above, but for the update
+      // path (the exact scenario from the original bug report).
+      const ChildSchema = new mongoose.Schema({ field: String })
+      ChildSchema.index({ field: 1 }, { unique: true })
+
+      const ParentSchema = new mongoose.Schema({ child: ChildSchema })
+      ParentSchema.plugin(uniqueValidator)
+
+      mongoose.model('Parent', ParentSchema)
+      const Child = mongoose.model('Child', ChildSchema)
+
+      await new Child({ field: 'y' }).save()
+
+      const child = await Child.findOne({})
+      child.field = 'x'
+      await child.save()
+    })
+
+    it('still throws for embedded subdoc uniqueness violation when parent schema has plugin', async function () {
+      // Regression guard: the fix must not suppress legitimate validation for
+      // documents that ARE embedded subdocs of the plugin-bearing parent schema.
+      const ChildSchema = new mongoose.Schema({ field: String })
+      ChildSchema.index({ field: 1 }, { unique: true })
+
+      const ParentSchema = new mongoose.Schema({ child: ChildSchema })
+      ParentSchema.plugin(uniqueValidator)
+
+      const Parent = mongoose.model('Parent', ParentSchema)
+      mongoose.model('Child', ChildSchema)
+
+      await new Parent({ child: { field: 'dupe' } }).save()
+
+      try {
+        await new Parent({ child: { field: 'dupe' } }).save()
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors['child.field'].kind).to.equal('unique')
+      }
+    })
+
     it('does not throw when updating nested array values', async function () {
       const User = mongoose.model(
         'User',

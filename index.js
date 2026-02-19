@@ -156,6 +156,16 @@ const plugin = function (schema, options) {
                     ? false
                     : pathName.split('.').length > 1
 
+                  // Guard: skip if this validator was registered from a
+                  // parent-schema plugin context but is now running on a
+                  // standalone document whose own schema does not contain
+                  // pathName. This prevents false positives when a child
+                  // schema with a unique index is embedded in a parent
+                  // schema that has the plugin applied.
+                  if (!isSubdocument && this.schema?.path(pathName) == null) {
+                    return resolve(true)
+                  }
+
                   for (const name of paths) {
                     let pathValue
                     if (isSubdocument) {
