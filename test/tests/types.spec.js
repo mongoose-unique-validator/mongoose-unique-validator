@@ -1,5 +1,5 @@
 import uniqueValidator from '../../index.js'
-import * as helpers from '../helpers.js'
+import * as helpers from '../helpers/index.js'
 import { expect } from 'chai'
 
 export default function (mongoose) {
