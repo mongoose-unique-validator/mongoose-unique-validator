@@ -1,3 +1,4 @@
+import codesSpec from './tests/codes.spec.js'
 import messagesSpec from './tests/messages.spec.js'
 import typesSpec from './tests/types.spec.js'
 import validationSpec from './tests/validation.spec.js'
@@ -18,6 +19,7 @@ describe('Mongoose Unique Validator', function () {
   validationSpec(mongoose)
   typesSpec(mongoose)
   messagesSpec(mongoose)
+  codesSpec(mongoose)
 
   after(function () {
     mongoose.connection.dropDatabase()

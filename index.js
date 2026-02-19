@@ -40,6 +40,7 @@ const plugin = function (schema, options) {
     options.message ||
     plugin.defaults.message ||
     'Error, expected `{PATH}` to be unique. Value: `{VALUE}`'
+  const code = options.code !== undefined ? options.code : plugin.defaults.code
 
   // Mongoose Schema objects don't describe default _id indexes
   // https://github.com/Automattic/mongoose/issues/5998
@@ -63,8 +64,8 @@ const plugin = function (schema, options) {
 
         if (path) {
           // Add an async validator
-          path.validate(
-            function () {
+          const validatorDef = {
+            validator: function () {
               return new Promise((resolve, reject) => {
                 const isQuery = this.constructor.name === 'Query'
                 const conditions = {}
@@ -253,9 +254,11 @@ const plugin = function (schema, options) {
                   })
               })
             },
-            pathMessage,
-            type
-          )
+            message: pathMessage,
+            type,
+            ...(code !== undefined && { code })
+          }
+          path.validate(validatorDef)
         }
       }
     }
