@@ -11,7 +11,6 @@ export async function afterEachCommon() {
     }
   }
   mongoose.models = {}
-  mongoose.modelSchemas = {}
   mongoose.connection.models = {}
   uniqueValidator.defaults = {}
 }
