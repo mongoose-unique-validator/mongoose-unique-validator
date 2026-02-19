@@ -62,7 +62,6 @@
   "files": [
     "index.js",
     "package.json",
-    "CHANGELOG.md",
     "LICENSE.txt",
     "README.md"
   ]
