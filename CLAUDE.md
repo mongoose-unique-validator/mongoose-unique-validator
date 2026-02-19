@@ -5,9 +5,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Run all tests (requires a local MongoDB instance on port 27017)
-pnpm test
-
 # Run all tests (uses docker mongo container)
 pnpm test:docker
 
