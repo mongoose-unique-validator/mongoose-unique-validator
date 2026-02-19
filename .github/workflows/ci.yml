@@ -3,7 +3,17 @@ name: CI
 on:
   push:
     branches: ['**']
+    paths:
+      - '**/*.js'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/ci.yml'
   pull_request:
+    paths:
+      - '**/*.js'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/ci.yml'
 
 jobs:
   lint:
