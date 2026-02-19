@@ -1,49 +1,56 @@
 # mongoose-unique-validator
 
+[![npm version](https://img.shields.io/npm/v/mongoose-unique-validator)](https://www.npmjs.com/package/mongoose-unique-validator)
+[![CI](https://github.com/mongoose-unique-validator/mongoose-unique-validator/actions/workflows/ci.yml/badge.svg)](https://github.com/mongoose-unique-validator/mongoose-unique-validator/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/npm/l/mongoose-unique-validator)](LICENSE.txt)
+
 mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.
 
 This makes error handling much easier, since you will get a Mongoose validation error when you attempt to violate a
 [unique constraint](http://mongoosejs.com/docs/api.html#schematype_SchemaType-unique), rather than an E11000 error
 from MongoDB.
 
-## Usage
+## Table of Contents
 
-Yarn: `yarn add mongoose-unique-validator`
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Find + Updates](#find--updates)
+- [Custom Error Types](#custom-error-types)
+- [Custom Error Messages](#custom-error-messages)
+- [Custom Error Codes](#custom-error-codes)
+- [Global Defaults](#global-defaults)
+- [Case Insensitive](#case-insensitive)
+- [Additional Conditions](#additional-conditions)
+- [Caveats](#caveats)
 
-NPM: `npm install --save mongoose-unique-validator`
+## Installation
 
-Then, apply the plugin to your schema:
-
-```js
-import mongoose from 'mongoose'
-import uniqueValidator from 'mongoose-unique-validator'
-
-const mySchema = mongoose.Schema(/* put your schema definition here */)
-mySchema.plugin(uniqueValidator)
+```sh
+npm install mongoose-unique-validator
+# or
+yarn add mongoose-unique-validator
+# or
+pnpm add mongoose-unique-validator
 ```
 
-## Example
+## Quick Start
 
-Let’s say you have a user schema. You can easily add validation for the unique constraints in this schema by applying
-the `uniqueValidator` plugin to your user schema:
+Apply the plugin to your schema:
 
 ```js
 import mongoose from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 
-// Define your schema as normal.
 const userSchema = mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, index: true, unique: true, required: true },
   password: { type: String, required: true }
 })
 
-// Apply the uniqueValidator plugin to userSchema.
 userSchema.plugin(uniqueValidator)
 ```
 
-Now when you try to save a user, the unique validator will check for duplicate database entries and report them just
-like any other validation error:
+Now when you try to save a duplicate, the error is reported as a standard Mongoose `ValidationError`:
 
 ```js
 try {
@@ -55,7 +62,7 @@ try {
 
   await user.save()
 } catch (err) {
-  // error here
+  // err.name === 'ValidationError'
 }
 ```
 
@@ -77,13 +84,7 @@ try {
 
 ## Find + Updates
 
-When using `findOneAndUpdate` and related methods, mongoose doesn't automatically run validation. To trigger this,
-you need to pass a configuration object. For technical reasons, this plugin requires that you also set the context
-option to `query`.
-
-`{ runValidators: true, context: 'query' }`
-
-A full example:
+`findOneAndUpdate` and related methods don't run validation by default. Pass `{ runValidators: true, context: 'query' }` to enable it:
 
 ```js
 User.findOneAndUpdate(
@@ -96,41 +97,36 @@ User.findOneAndUpdate(
 )
 ```
 
+> `context: 'query'` is required — without it this plugin cannot access the update values.
+
 ## Custom Error Types
 
-You can pass through a custom error type as part of the optional `options` argument:
+Pass a `type` option to control the `kind` field on the `ValidatorError`:
 
 ```js
 userSchema.plugin(uniqueValidator, { type: 'mongoose-unique-validator' })
 ```
 
-After running the above example the output will be:
-
 ```js
 {
-    message: 'Validation failed',
-    name: 'ValidationError',
     errors: {
         username: {
-            message: 'Error, expected `username` to be unique. Value: `JohnSmith`',
-            name: 'ValidatorError',
-            kind: 'mongoose-unique-validator',
-            path: 'username',
-            value: 'JohnSmith'
+            kind: 'mongoose-unique-validator',  // <--
+            ...
         }
     }
 }
 ```
 
-You can also specify a default custom error type by overriding the plugin `defaults.type` variable:
-
-```js
-uniqueValidator.defaults.type = 'mongoose-unique-validator'
-```
+You can also set this globally — see [Global Defaults](#global-defaults).
 
 ## Custom Error Messages
 
-You can pass through a custom error message as part of the optional `options` argument:
+Pass a `message` option to customize the error message. The following template variables are available:
+
+- `{PATH}` — the field name
+- `{VALUE}` — the duplicate value
+- `{TYPE}` — the error kind
 
 ```js
 userSchema.plugin(uniqueValidator, {
@@ -138,56 +134,48 @@ userSchema.plugin(uniqueValidator, {
 })
 ```
 
-You have access to all of the standard Mongoose error message templating:
-
-- `{PATH}`
-- `{VALUE}`
-- `{TYPE}`
-
-You can also specify a default custom error message by overriding the plugin `defaults.message` variable:
-
-```js
-uniqueValidator.defaults.message = 'Error, expected {PATH} to be unique.'
-```
+You can also set this globally — see [Global Defaults](#global-defaults).
 
 ## Custom Error Codes
 
-You can attach a custom numeric or string code to validation errors via the optional `options` argument:
+Pass a `code` option to attach a numeric or string code to each `ValidatorError`:
 
 ```js
 userSchema.plugin(uniqueValidator, { code: 11000 })
 ```
 
-The code is available on each `ValidatorError` under the `properties.code` field:
+The code is available under `properties.code`:
 
 ```js
 {
-    message: 'Validation failed',
-    name: 'ValidationError',
     errors: {
         username: {
-            message: 'Error, expected `username` to be unique. Value: `JohnSmith`',
-            name: 'ValidatorError',
-            kind: 'unique',
-            path: 'username',
-            value: 'JohnSmith',
             properties: {
-                code: 11000
-            }
+                code: 11000  // <--
+            },
+            ...
         }
     }
 }
 ```
 
-You can also set a default code globally:
+You can also set this globally — see [Global Defaults](#global-defaults).
+
+## Global Defaults
+
+Instead of passing options to every `schema.plugin(uniqueValidator, ...)` call, set defaults once at startup. Per-schema options always take precedence.
 
 ```js
+import uniqueValidator from 'mongoose-unique-validator'
+
+uniqueValidator.defaults.type = 'mongoose-unique-validator'
+uniqueValidator.defaults.message = 'Error, expected {PATH} to be unique.'
 uniqueValidator.defaults.code = 11000
 ```
 
 ## Case Insensitive
 
-For case-insensitive matches, include the `uniqueCaseInsensitive` option in your schema. Queries will treat `john.smith@gmail.com` and `John.Smith@gmail.com` as duplicates.
+Add `uniqueCaseInsensitive: true` to a field to treat values as case-insensitively equal. For example, `john.smith@gmail.com` and `John.Smith@gmail.com` will be considered duplicates.
 
 ```js
 const userSchema = mongoose.Schema({
@@ -205,9 +193,7 @@ const userSchema = mongoose.Schema({
 
 ## Additional Conditions
 
-For additional unique-constraint conditions (ex: only enforce unique constraint on non soft-deleted records), the MongoDB option `partialFilterExpression` can be used.
-
-Note: the option `index` must be passed as an object containing `unique: true`, or else `partialFilterExpression` will be ignored.
+Use MongoDB's `partialFilterExpression` to scope the uniqueness constraint. For example, to only enforce uniqueness among non-deleted records:
 
 ```js
 const userSchema = mongoose.Schema({
@@ -224,22 +210,10 @@ const userSchema = mongoose.Schema({
 })
 ```
 
-## Global Defaults
-
-Instead of passing options to every `schema.plugin(uniqueValidator, ...)` call, you can set defaults once at startup:
-
-```js
-import uniqueValidator from 'mongoose-unique-validator'
-
-uniqueValidator.defaults.type = 'mongoose-unique-validator'
-uniqueValidator.defaults.message = 'Error, expected {PATH} to be unique.'
-uniqueValidator.defaults.code = 11000
-```
-
-Per-schema options always take precedence over these defaults.
+> **Note:** `index` must be an object containing `unique: true` — shorthand like `index: true, unique: true` will cause `partialFilterExpression` to be ignored.
 
 ## Caveats
 
-This plugin validates uniqueness by querying the database before save. Because two saves can run concurrently, both read a count of zero, and both proceed to insert — resulting in a duplicate that MongoDB's unique index will reject with a raw E11000 error rather than a Mongoose `ValidationError`.
+This plugin validates uniqueness by querying the database before save. Because two saves can run concurrently, both can read a count of zero and then both proceed to insert — resulting in a duplicate that MongoDB's unique index will reject with a raw E11000 error rather than a Mongoose `ValidationError`.
 
 This plugin is therefore a **UX layer**, not a correctness guarantee. The unique index on the MongoDB collection remains the true enforcement mechanism and should always be kept in place. For most applications the race window is negligible, but in high-concurrency write scenarios be aware that the E11000 path is still reachable.
