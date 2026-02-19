@@ -1,8 +1,7 @@
-import each from 'lodash.foreach'
-import get from 'lodash.get'
-import merge from 'lodash.merge'
+const isFunction = val => typeof val === 'function'
 
-const isFunc = val => typeof val === 'function'
+const getPath = (obj, path) =>
+  path.split('.').reduce((acc, key) => acc?.[key], obj)
 
 const deepPath = function (schema, pathName) {
   let path
@@ -12,7 +11,7 @@ const deepPath = function (schema, pathName) {
     pathName = paths.shift()
   }
 
-  if (isFunc(schema.path)) {
+  if (isFunction(schema.path)) {
     path = schema.path(pathName)
   }
 
@@ -36,12 +35,12 @@ const plugin = function (schema, options) {
   const indexes = [[{ _id: 1 }, { unique: true }]].concat(schema.indexes())
 
   // Dynamically iterate all indexes
-  each(indexes, index => {
+  for (const index of indexes) {
     const indexOptions = index[1]
 
     if (indexOptions.unique) {
       const paths = Object.keys(index[0])
-      each(paths, pathName => {
+      for (const pathName of paths) {
         // Choose error message
         const pathMessage =
           typeof indexOptions.unique === 'string'
@@ -62,14 +61,14 @@ const plugin = function (schema, options) {
 
                 if (isQuery) {
                   // If the doc is a query, this is a findAndUpdate.
-                  each(paths, name => {
+                  for (const name of paths) {
                     let pathValue =
-                      get(this, '_update.' + name) ||
-                      get(this, '_update.$set.' + name)
+                      getPath(this, '_update.' + name) ||
+                      getPath(this, '_update.$set.' + name)
 
                     // Wrap with case-insensitivity
                     if (
-                      get(path, 'options.uniqueCaseInsensitive') ||
+                      path?.options?.uniqueCaseInsensitive ||
                       indexOptions.uniqueCaseInsensitive
                     ) {
                       // Escape RegExp chars
@@ -81,12 +80,12 @@ const plugin = function (schema, options) {
                     }
 
                     conditions[name] = pathValue
-                  })
+                  }
 
                   // Use conditions the user has with find*AndUpdate
-                  each(this._conditions, (value, key) => {
+                  for (const [key, value] of Object.entries(this._conditions)) {
                     conditions[key] = { $ne: value }
-                  })
+                  }
 
                   model = this.model
                 } else {
@@ -103,24 +102,24 @@ const plugin = function (schema, options) {
                     ? false
                     : pathName.split('.').length > 1
 
-                  each(paths, name => {
+                  for (const name of paths) {
                     let pathValue
                     if (isSubdocument) {
-                      pathValue = get(this, name.split('.').pop())
+                      pathValue = this[name.split('.').pop()]
                     } else if (isNestedPath) {
                       const keys = name.split('.')
-                      pathValue = get(this, keys[0])
+                      pathValue = this[keys[0]]
                       for (let i = 1; i < keys.length; i++) {
                         const key = keys[i]
-                        pathValue = get(pathValue, key)
+                        pathValue = pathValue?.[key]
                       }
                     } else {
-                      pathValue = get(this, name)
+                      pathValue = this[name]
                     }
 
                     // Wrap with case-insensitivity
                     if (
-                      get(path, 'options.uniqueCaseInsensitive') ||
+                      path?.options?.uniqueCaseInsensitive ||
                       indexOptions.uniqueCaseInsensitive
                     ) {
                       // Escape RegExp chars
@@ -132,7 +131,7 @@ const plugin = function (schema, options) {
                     }
 
                     conditions[name] = pathValue
-                  })
+                  }
 
                   // If we're not new, exclude our own record from the query
                   if (!isNew) {
@@ -153,7 +152,7 @@ const plugin = function (schema, options) {
                     model = this.ownerDocument().model(
                       this.ownerDocument().constructor.modelName
                     )
-                  } else if (isFunc(this.model)) {
+                  } else if (isFunction(this.model)) {
                     model = this.model(this.constructor.modelName)
                   } else {
                     model = this.constructor.model(this.constructor.modelName)
@@ -161,7 +160,10 @@ const plugin = function (schema, options) {
                 }
 
                 if (indexOptions.partialFilterExpression) {
-                  merge(conditions, indexOptions.partialFilterExpression)
+                  Object.assign(
+                    conditions,
+                    indexOptions.partialFilterExpression
+                  )
                 }
 
                 // Is this model a discriminator and the unique index is on the whole collection,
@@ -190,9 +192,9 @@ const plugin = function (schema, options) {
             type
           )
         }
-      })
+      }
     }
-  })
+  }
 }
 
 plugin.defaults = {}
