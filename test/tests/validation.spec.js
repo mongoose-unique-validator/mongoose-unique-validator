@@ -733,6 +733,22 @@ export default function (mongoose) {
       }
     })
 
+    it('does not throw error when using static Model.validate()', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
+
+      // Static Model.validate() runs validators with `this` as a plain object,
+      // not a Mongoose Document. Uniqueness cannot be DB-checked in this context,
+      // so the plugin should skip uniqueness validation rather than crash.
+      await User.validate({
+        username: helpers.USERS[0].username,
+        email: helpers.USERS[0].email,
+        password: helpers.USERS[0].password
+      })
+    })
+
     it('does not throw error when create vs save data (with model field)', async function () {
       const UID = mongoose.model(
         'UID',

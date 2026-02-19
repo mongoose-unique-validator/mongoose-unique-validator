@@ -98,6 +98,14 @@ const plugin = function (schema, options) {
 
                   model = this.model
                 } else {
+                  // When called via the static Model.validate(obj, paths) method,
+                  // `this` is a plain object (the validated data), not a Mongoose
+                  // Document. Uniqueness cannot be checked without a document context,
+                  // so skip validation in this case.
+                  if (!isFunction(this.$parent)) {
+                    return resolve(true)
+                  }
+
                   const parentDoc = this.$parent()
                   const isNew = parentDoc.isNew
 
