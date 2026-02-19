@@ -194,7 +194,7 @@ export default function (mongoose) {
       expect(result).to.be.an('object')
     })
 
-    // adresses https://github.com/blakehaswell/mongoose-unique-validator/issues/108
+    // addresses https://github.com/blakehaswell/mongoose-unique-validator/issues/108
     it('does not throw error when saving self with new unique value via findByIdAndUpdate with multiple records', async function () {
       const User = mongoose.model(
         'User',
@@ -237,7 +237,7 @@ export default function (mongoose) {
       expect(result).to.be.an('object')
     })
 
-    // adresses https://github.com/blakehaswell/mongoose-unique-validator/issues/108
+    // addresses https://github.com/blakehaswell/mongoose-unique-validator/issues/108
     it('does not throw error when saving self with new unique value via findById with multiple records', async function () {
       const User = mongoose.model(
         'User',
