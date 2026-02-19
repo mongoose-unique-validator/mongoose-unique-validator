@@ -173,6 +173,56 @@ export default function (mongoose) {
       expect(result).to.be.an('object')
     })
 
+    // Regression: when the filter field is also the unique field being updated to the
+    // same value, the $ne exclusion must not overwrite the equality check, causing
+    // false positives when other documents exist in the collection.
+    it('does not throw error when keeping unique field value unchanged via findOneAndUpdate with multiple records', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
+
+      await User.insertMany([helpers.USERS[0], helpers.USERS[1]])
+
+      const result = await User.findOneAndUpdate(
+        { email: helpers.USERS[0].email },
+        { email: helpers.USERS[0].email, username: 'JohnSmith' },
+        { runValidators: true, context: 'query' }
+      ).exec()
+      expect(result).to.be.an('object')
+    })
+
+    it('does not throw error when keeping unique field value unchanged via updateOne with multiple records', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
+
+      await User.insertMany([helpers.USERS[0], helpers.USERS[1]])
+
+      await User.updateOne(
+        { email: helpers.USERS[0].email },
+        { email: helpers.USERS[0].email, username: 'JohnSmith' },
+        { runValidators: true, context: 'query' }
+      )
+    })
+
+    it('does not throw error when keeping unique field value unchanged via findOneAndUpdate using $set with multiple records', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createUserSchema().plugin(uniqueValidator)
+      )
+
+      await User.insertMany([helpers.USERS[0], helpers.USERS[1]])
+
+      const result = await User.findOneAndUpdate(
+        { email: helpers.USERS[0].email },
+        { $set: { email: helpers.USERS[0].email, username: 'JohnSmith' } },
+        { runValidators: true, context: 'query' }
+      ).exec()
+      expect(result).to.be.an('object')
+    })
+
     it('does not throw error when saving self with new unique value via findByIdAndUpdate', async function () {
       const User = mongoose.model(
         'User',

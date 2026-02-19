@@ -85,7 +85,15 @@ const plugin = function (schema, options) {
 
                   // Use conditions the user has with find*AndUpdate
                   for (const [key, value] of Object.entries(this._conditions)) {
-                    conditions[key] = { $ne: value }
+                    if (key in conditions) {
+                      // The filter field overlaps with a unique field in the update.
+                      // Keep the original uniqueness check (may be a RegExp for case-insensitive
+                      // indexes) and push the exclusion into $and so neither overwrites the other.
+                      if (!conditions.$and) conditions.$and = []
+                      conditions.$and.push({ [key]: { $ne: value } })
+                    } else {
+                      conditions[key] = { $ne: value }
+                    }
                   }
 
                   model = this.model
