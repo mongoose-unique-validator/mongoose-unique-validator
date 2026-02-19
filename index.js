@@ -68,8 +68,9 @@ const plugin = function (schema, options) {
 
                     // Wrap with case-insensitivity
                     if (
-                      path?.options?.uniqueCaseInsensitive ||
-                      indexOptions.uniqueCaseInsensitive
+                      pathValue != null &&
+                      (path?.options?.uniqueCaseInsensitive ||
+                        indexOptions.uniqueCaseInsensitive)
                     ) {
                       // Escape RegExp chars
                       pathValue = pathValue.replace(
@@ -119,8 +120,9 @@ const plugin = function (schema, options) {
 
                     // Wrap with case-insensitivity
                     if (
-                      path?.options?.uniqueCaseInsensitive ||
-                      indexOptions.uniqueCaseInsensitive
+                      pathValue != null &&
+                      (path?.options?.uniqueCaseInsensitive ||
+                        indexOptions.uniqueCaseInsensitive)
                     ) {
                       // Escape RegExp chars
                       pathValue = pathValue.replace(
