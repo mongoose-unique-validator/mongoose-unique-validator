@@ -546,34 +546,34 @@ export default function (mongoose) {
     it('throws error for index violation in an array of nested objects', async function () {
       const User = mongoose.model(
         'User',
-        helpers.createNestedFieldUserSchema().plugin(uniqueValidator)
+        helpers.createArrayOfNestedUserSchema().plugin(uniqueValidator)
       )
 
-      const nestedUser = {
-        username: 'JohnSmith',
-        contact: { email: 'john.smith@gmail.com' },
-        password: 'j0hnNYb0i'
+      const firstUser = {
+        username: 'JenSmith',
+        contacts: [{ email: 'jen.smith@gmail.com' }],
+        password: 'OMGitsJen'
       }
 
-      const otherNestedUser = {
-        username: 'BobSmith',
-        contact: { email: 'john.smith@gmail.com' },
-        password: 'j0hnNYb0i'
+      const duplicateContactUser = {
+        username: 'SamSmith',
+        contacts: [{ email: 'jen.smith@gmail.com' }],
+        password: 'SamRules1000'
       }
 
       // Save the first user
-      await new User(nestedUser).save()
+      await new User(firstUser).save()
 
       try {
-        await new User(otherNestedUser).save()
+        await new User(duplicateContactUser).save()
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors['contact.email'].name).to.equal('ValidatorError')
-        expect(err.errors['contact.email'].kind).to.equal('unique')
-        expect(err.errors['contact.email'].path).to.equal('contact.email')
-        expect(err.errors['contact.email'].value).to.equal(
-          'john.smith@gmail.com'
+        expect(err.errors['contacts.0.email'].name).to.equal('ValidatorError')
+        expect(err.errors['contacts.0.email'].kind).to.equal('unique')
+        expect(err.errors['contacts.0.email'].path).to.equal('email')
+        expect(err.errors['contacts.0.email'].value).to.equal(
+          'jen.smith@gmail.com'
         )
       }
     })
