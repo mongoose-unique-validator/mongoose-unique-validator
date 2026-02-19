@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "mocha test --exit",
+    "test:docker": "docker compose up -d --wait && pnpm run test && docker compose down",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,css,cjs,mjs,ts}\"",
     "prepare": "husky"
