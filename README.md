@@ -150,6 +150,41 @@ You can also specify a default custom error message by overriding the plugin `de
 uniqueValidator.defaults.message = 'Error, expected {PATH} to be unique.'
 ```
 
+## Custom Error Codes
+
+You can attach a custom numeric or string code to validation errors via the optional `options` argument:
+
+```js
+userSchema.plugin(uniqueValidator, { code: 11000 })
+```
+
+The code is available on each `ValidatorError` under the `properties.code` field:
+
+```js
+{
+    message: 'Validation failed',
+    name: 'ValidationError',
+    errors: {
+        username: {
+            message: 'Error, expected `username` to be unique. Value: `JohnSmith`',
+            name: 'ValidatorError',
+            kind: 'unique',
+            path: 'username',
+            value: 'JohnSmith',
+            properties: {
+                code: 11000
+            }
+        }
+    }
+}
+```
+
+You can also set a default code globally:
+
+```js
+uniqueValidator.defaults.code = 11000
+```
+
 ## Case Insensitive
 
 For case-insensitive matches, include the `uniqueCaseInsensitive` option in your schema. Queries will treat `john.smith@gmail.com` and `John.Smith@gmail.com` as duplicates.
@@ -189,10 +224,22 @@ const userSchema = mongoose.Schema({
 })
 ```
 
+## Global Defaults
+
+Instead of passing options to every `schema.plugin(uniqueValidator, ...)` call, you can set defaults once at startup:
+
+```js
+import uniqueValidator from 'mongoose-unique-validator'
+
+uniqueValidator.defaults.type = 'mongoose-unique-validator'
+uniqueValidator.defaults.message = 'Error, expected {PATH} to be unique.'
+uniqueValidator.defaults.code = 11000
+```
+
+Per-schema options always take precedence over these defaults.
+
 ## Caveats
 
-Because we rely on async operations to verify whether a document exists in the database, it's possible for two queries to execute at the same time, both get 0 back, and then both insert into MongoDB.
+This plugin validates uniqueness by querying the database before save. Because two saves can run concurrently, both read a count of zero, and both proceed to insert — resulting in a duplicate that MongoDB's unique index will reject with a raw E11000 error rather than a Mongoose `ValidationError`.
 
-Outside of automatically locking the collection or forcing a single connection, there's no real solution.
-
-For most of our users this won't be a problem, but is an edge case to be aware of.
+This plugin is therefore a **UX layer**, not a correctness guarantee. The unique index on the MongoDB collection remains the true enforcement mechanism and should always be kept in place. For most applications the race window is negligible, but in high-concurrency write scenarios be aware that the E11000 path is still reachable.
