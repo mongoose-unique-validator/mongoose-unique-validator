@@ -10,6 +10,7 @@
   "scripts": {
     "test": "mocha test --exit",
     "test:docker": "docker compose up -d --wait && pnpm run test && docker compose down",
+    "test:docker:mongoose8": "node scripts/test-mongoose8.js",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,css,cjs,mjs,ts}\"",
     "prepare": "husky"

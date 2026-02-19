@@ -22,11 +22,12 @@ jobs:
       - run: pnpm run lint
 
   test:
-    name: Test (Node ${{ matrix.node-version }})
+    name: Test (Node ${{ matrix.node-version }}, Mongoose ${{ matrix.mongoose-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18, 20, 22]
+        mongoose-version: [8, 9]
     services:
       mongo:
         image: mongo:latest
@@ -48,4 +49,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm add -D mongoose@${{ matrix.mongoose-version }}
       - run: pnpm test

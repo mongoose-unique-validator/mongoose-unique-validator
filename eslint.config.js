@@ -3,15 +3,25 @@ import eslintConfigPrettier from 'eslint-config-prettier'
 import { defineConfig } from 'eslint/config'
 import globals from 'globals'
 
-export default defineConfig(eslint.configs.recommended, eslintConfigPrettier, {
-  files: ['**/*.spec.js'],
-  languageOptions: {
-    globals: {
-      ...globals.mocha,
-      chai: 'readonly'
+export default defineConfig(
+  eslint.configs.recommended,
+  eslintConfigPrettier,
+  {
+    files: ['**/*.spec.js'],
+    languageOptions: {
+      globals: {
+        ...globals.mocha,
+        chai: 'readonly'
+      }
+    },
+    rules: {
+      'no-unused-expressions': 'off'
     }
   },
-  rules: {
-    'no-unused-expressions': 'off'
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: globals.node
+    }
   }
-})
+)
