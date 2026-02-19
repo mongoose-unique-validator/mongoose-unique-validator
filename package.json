@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/mongoose-unique-validator/mongoose-unique-validator#readme",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
