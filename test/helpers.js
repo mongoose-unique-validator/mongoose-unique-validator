@@ -115,25 +115,6 @@ export function createCaseInsensitiveCompoundIndexSchema() {
   return schema
 }
 
-export function createCustomCompoundIndexSchema() {
-  const schema = new mongoose.Schema({
-    username: {
-      type: String
-    },
-    email: {
-      type: String,
-      index: true
-    },
-    password: {
-      type: String
-    }
-  })
-
-  schema.index({ username: 1, email: 1 }, { unique: true })
-
-  return schema
-}
-
 export function createCustomIdSchema() {
   return new mongoose.Schema({
     position: Number
