@@ -274,6 +274,26 @@ export const USERS_PARTIAL_FILTER_EXPRESSION = [
   }
 ]
 
+export function createDiscriminatorPartialFilterSchema() {
+  const schema = new mongoose.Schema(
+    {
+      field1: { type: String },
+      field2: { type: String }
+    },
+    { discriminatorKey: 'type' }
+  )
+
+  schema.index(
+    { field1: 1, field2: 1 },
+    {
+      unique: true,
+      partialFilterExpression: { type: 'TypeB' }
+    }
+  )
+
+  return schema
+}
+
 export const USERS_NESTED_ARRAY = [
   {
     username: 'JenSmith',

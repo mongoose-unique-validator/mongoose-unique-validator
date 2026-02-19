@@ -3,6 +3,17 @@ const isFunction = val => typeof val === 'function'
 const getPath = (obj, path) =>
   path.split('.').reduce((acc, key) => acc?.[key], obj)
 
+// Returns true if obj satisfies all simple equality conditions in filter.
+// MongoDB operator values in the filter are conservatively treated as a match
+// (i.e. we don't skip validation when we can't evaluate the condition).
+// Fields absent from obj are also conservatively treated as a match.
+const matchesSimpleFilter = (obj, filter) =>
+  Object.entries(filter).every(([key, val]) => {
+    if (val !== null && typeof val === 'object') return true
+    const objVal = getPath(obj, key)
+    return objVal === undefined || objVal === val
+  })
+
 const deepPath = function (schema, pathName) {
   let path
   const paths = pathName.split('.')
@@ -60,6 +71,18 @@ const plugin = function (schema, options) {
                 let model
 
                 if (isQuery) {
+                  // Skip validation if the query's filter conditions indicate
+                  // the document being updated is outside the partial index scope.
+                  if (
+                    indexOptions.partialFilterExpression &&
+                    !matchesSimpleFilter(
+                      this._conditions,
+                      indexOptions.partialFilterExpression
+                    )
+                  ) {
+                    return resolve(true)
+                  }
+
                   // If the doc is a query, this is a findAndUpdate.
                   for (const name of paths) {
                     let pathValue =
@@ -110,6 +133,20 @@ const plugin = function (schema, options) {
                   const isNew = parentDoc.isNew
 
                   if (!isNew && !parentDoc.isModified(pathName)) {
+                    return resolve(true)
+                  }
+
+                  // Skip validation if this document is outside the scope of
+                  // the partial index (i.e. it doesn't satisfy the
+                  // partialFilterExpression, so the unique constraint doesn't
+                  // apply to it at all).
+                  if (
+                    indexOptions.partialFilterExpression &&
+                    !matchesSimpleFilter(
+                      parentDoc.toObject(),
+                      indexOptions.partialFilterExpression
+                    )
+                  ) {
                     return resolve(true)
                   }
 

@@ -899,6 +899,44 @@ export default function (mongoose) {
       }
     })
 
+    // Regression: documents whose type is outside the partialFilterExpression
+    // scope must not be validated against an index they are not subject to.
+    it('does not throw for discriminator document outside partial filter scope', async function () {
+      const Base = mongoose.model(
+        'Base',
+        helpers.createDiscriminatorPartialFilterSchema().plugin(uniqueValidator)
+      )
+      const TypeA = Base.discriminator('TypeA', new mongoose.Schema({}))
+      const TypeB = Base.discriminator('TypeB', new mongoose.Schema({}))
+
+      // Create a TypeB document — it is subject to the unique index.
+      await new TypeB({ field1: 'foo', field2: 'bar' }).save()
+
+      // A TypeA document with the same values should succeed because the
+      // partialFilterExpression { type: 'TypeB' } excludes TypeA from the index.
+      const result = await new TypeA({ field1: 'foo', field2: 'bar' }).save()
+      expect(result).to.be.an('object')
+    })
+
+    it('throws for duplicate discriminator document inside partial filter scope', async function () {
+      const Base = mongoose.model(
+        'Base',
+        helpers.createDiscriminatorPartialFilterSchema().plugin(uniqueValidator)
+      )
+      Base.discriminator('TypeA', new mongoose.Schema({}))
+      const TypeB = Base.discriminator('TypeB', new mongoose.Schema({}))
+
+      await new TypeB({ field1: 'foo', field2: 'bar' }).save()
+
+      try {
+        await new TypeB({ field1: 'foo', field2: 'bar' }).save()
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.field1.name).to.equal('ValidatorError')
+        expect(err.errors.field1.kind).to.equal('unique')
+      }
+    })
+
     it('does not throw when updating nested array values', async function () {
       const User = mongoose.model(
         'User',
