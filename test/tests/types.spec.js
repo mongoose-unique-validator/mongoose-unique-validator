@@ -47,6 +47,25 @@ export default function (mongoose) {
       }
     })
 
+    it('uses custom type for compound index violation', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createCompoundIndexSchema().plugin(uniqueValidator, {
+          type: 'mongoose-unique-validator'
+        })
+      )
+
+      await new User(helpers.USERS[0]).save()
+
+      try {
+        await new User(helpers.USERS[0]).save()
+
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.kind).to.equal('mongoose-unique-validator')
+      }
+    })
+
     it('uses custom type from default plugin configuration', async function () {
       uniqueValidator.defaults.type = 'mongoose-unique-validator'
 

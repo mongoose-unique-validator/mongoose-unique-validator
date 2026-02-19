@@ -51,6 +51,27 @@ export default function (mongoose) {
       }
     })
 
+    it('uses custom message for compound index violation', async function () {
+      const User = mongoose.model(
+        'User',
+        helpers.createCompoundIndexSchema().plugin(uniqueValidator, {
+          message: 'Path: {PATH}, value: {VALUE}, type: {TYPE}'
+        })
+      )
+
+      await new User(helpers.USERS[0]).save()
+
+      try {
+        await new User(helpers.USERS[0]).save()
+
+        throw new Error('Should have thrown')
+      } catch (err) {
+        expect(err.errors.username.message).to.equal(
+          'Path: username, value: JohnSmith, type: unique'
+        )
+      }
+    })
+
     it('uses custom message from default plugin configuration', async function () {
       uniqueValidator.defaults.message =
         'Path: {PATH}, value: {VALUE}, type: {TYPE}'
