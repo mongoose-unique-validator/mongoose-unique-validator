@@ -20,6 +20,6 @@ describe('Mongoose Unique Validator', function () {
   codesSpec(mongoose)
 
   after(function () {
-    mongoose.connection.dropDatabase()
+    void mongoose.connection.dropDatabase()
   })
 })

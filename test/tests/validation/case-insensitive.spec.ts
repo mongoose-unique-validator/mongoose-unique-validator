@@ -16,7 +16,7 @@ export default function (mongoose: Mongoose) {
       // Save the first user
       await new User(helpers.USERS[0]).save()
       const user = new User(helpers.USERS[0])
-      user.email = user.email.toUpperCase()
+      user.email = user.email?.toUpperCase()
 
       // Try saving a duplicate
       try {
@@ -43,7 +43,7 @@ export default function (mongoose: Mongoose) {
       // Save the first user
       await new User(helpers.USERS[0]).save()
       const user = new User(helpers.USERS[0])
-      user.email = user.email.toUpperCase()
+      user.email = user.email?.toUpperCase()
 
       // Try saving a duplicate
       try {
@@ -87,7 +87,7 @@ export default function (mongoose: Mongoose) {
       try {
         await User.findOneAndUpdate(
           { email: helpers.USERS[1].email },
-          { email: helpers.USERS[0].email!.toUpperCase() },
+          { email: helpers.USERS[0].email?.toUpperCase() },
           { runValidators: true, context: 'query' }
         ).exec()
 
@@ -113,7 +113,7 @@ export default function (mongoose: Mongoose) {
       try {
         await User.findOneAndUpdate(
           { email: helpers.USERS[1].email },
-          { $set: { email: helpers.USERS[0].email!.toUpperCase() } },
+          { $set: { email: helpers.USERS[0].email?.toUpperCase() } },
           { runValidators: true, context: 'query' }
         ).exec()
 

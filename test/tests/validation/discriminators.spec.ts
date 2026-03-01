@@ -128,8 +128,13 @@ export default function (mongoose: Mongoose) {
       await new Child({ field: 'y' }).save()
 
       const child = await Child.findOne({})
-      child!.field = 'x'
-      await child!.save()
+
+      if (child) {
+        child.field = 'x'
+        await child.save()
+      } else {
+        throw new Error('Child document not found')
+      }
     })
 
     it('still throws for embedded subdoc uniqueness violation when parent schema has plugin', async function () {

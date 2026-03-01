@@ -9,12 +9,20 @@ export default defineConfig(
   eslintConfigPrettier,
   {
     files: ['**/*.ts'],
-    extends: [tseslint.configs.recommended],
+    extends: [
+      tseslint.configs.strictTypeChecked,
+      tseslint.configs.stylisticTypeChecked
+    ],
     languageOptions: {
-      parser: tseslint.parser
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname
+      }
     },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/array-type': ['error', { default: 'generic' }]
     }
   },
   {

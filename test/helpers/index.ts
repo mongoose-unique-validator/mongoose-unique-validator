@@ -13,7 +13,9 @@ export async function afterEachCommon(): Promise<void> {
       // Collection may not exist
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   ;(mongoose as any).models = {}
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   ;(mongoose.connection as any).models = {}
   uniqueValidator.defaults = {}
 }

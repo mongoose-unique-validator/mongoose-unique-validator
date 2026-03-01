@@ -135,11 +135,16 @@ export default function (mongoose: Mongoose) {
       // Save a user
       await user.save()
       const foundUser = await User.findById(user._id)
-      foundUser!.email = 'somethingNew@example.com'
-      foundUser!.username = 'JohnSmith'
 
-      const result = await foundUser!.save()
-      expect(result).to.be.an('object')
+      if (foundUser) {
+        foundUser.email = 'somethingNew@example.com'
+        foundUser.username = 'JohnSmith'
+
+        const result = await foundUser.save()
+        expect(result).to.be.an('object')
+      } else {
+        throw new Error('User document not found')
+      }
     })
 
     // addresses https://github.com/blakehaswell/mongoose-unique-validator/issues/108
@@ -156,11 +161,15 @@ export default function (mongoose: Mongoose) {
       ])
 
       const foundUser = await User.findById(createdUsers[0]._id)
-      foundUser!.email = 'somethingNew@example.com'
-      foundUser!.username = 'JohnSmith'
+      if (foundUser) {
+        foundUser.email = 'somethingNew@example.com'
+        foundUser.username = 'JohnSmith'
 
-      const result = await foundUser!.save()
-      expect(result).to.be.an('object')
+        const result = await foundUser.save()
+        expect(result).to.be.an('object')
+      } else {
+        throw new Error('User document not found')
+      }
     })
 
     it('throws error when saving self with new duplicate value via findOneAndUpdate', async function () {

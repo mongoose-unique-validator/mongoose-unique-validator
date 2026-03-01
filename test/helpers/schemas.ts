@@ -91,6 +91,7 @@ export function createCaseInsensitiveCompoundIndexSchema() {
     }
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   schema.index({ username: 1, email: 1 }, {
     unique: true,
     uniqueCaseInsensitive: true

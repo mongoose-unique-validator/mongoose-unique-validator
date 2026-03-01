@@ -332,6 +332,7 @@ export default function (mongoose: Mongoose) {
       // perform a create() vs save()
       const res = await UID.create(payloadWithModelField)
       expect(res.uid).to.equal(payloadWithModelField.uid)
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.model).to.equal(payloadWithModelField.model)
     })
   })

@@ -11,7 +11,7 @@ export interface NestedArrayUserFixture {
   password: string
 }
 
-export const USERS: UserFixture[] = [
+export const USERS: Array<UserFixture> = [
   {
     username: 'JohnSmith',
     email: 'john.smith@gmail.com',
@@ -38,7 +38,7 @@ export const USERS: UserFixture[] = [
   }
 ]
 
-export const USERS_REGEX: UserFixture[] = [
+export const USERS_REGEX: Array<UserFixture> = [
   {
     username: 'JohnSmith0',
     email: 'john0smith@gmail.com',
@@ -51,7 +51,7 @@ export const USERS_REGEX: UserFixture[] = [
   }
 ]
 
-export const USERS_PARTIAL_FILTER_EXPRESSION: UserFixture[] = [
+export const USERS_PARTIAL_FILTER_EXPRESSION: Array<UserFixture> = [
   {
     username: 'JaneSmith',
     email: 'jane.smith@gmail.com',
@@ -72,7 +72,7 @@ export const USERS_PARTIAL_FILTER_EXPRESSION: UserFixture[] = [
   }
 ]
 
-export const USERS_NESTED_ARRAY: NestedArrayUserFixture[] = [
+export const USERS_NESTED_ARRAY: Array<NestedArrayUserFixture> = [
   {
     username: 'JenSmith',
     contacts: [{ email: 'jen.smith@gmail.com' }],

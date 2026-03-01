@@ -121,6 +121,7 @@ export default function (mongoose: Mongoose) {
       const doc = await new User(helpers.USERS_NESTED_ARRAY[0]).save()
 
       // Try updating nested array to check if the unique validator will ignore the doc currently being updated
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       doc.contacts = [
         helpers.USERS_NESTED_ARRAY[0].contacts[0],
         helpers.USERS_NESTED_ARRAY[1].contacts[0]
