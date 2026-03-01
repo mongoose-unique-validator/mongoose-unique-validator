@@ -17,7 +17,7 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: Lint and Typecheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +30,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
+      - run: pnpm run typecheck
 
   test:
     name: Test (Node ${{ matrix.node-version }}, Mongoose ${{ matrix.mongoose-version }})

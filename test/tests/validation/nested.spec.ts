@@ -1,8 +1,9 @@
 import uniqueValidator from '../../../index.js'
 import * as helpers from '../../helpers/index.js'
+import type { Mongoose, ValidationError } from '../../types.js'
 import { expect } from 'chai'
 
-export default function (mongoose) {
+export default function (mongoose: Mongoose) {
   describe('Nested Fields', function () {
     afterEach(helpers.afterEachCommon)
 
@@ -32,12 +33,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors['contact.email'].name).to.equal('ValidatorError')
-        expect(err.errors['contact.email'].kind).to.equal('unique')
-        expect(err.errors['contact.email'].path).to.equal('contact.email')
-        expect(err.errors['contact.email'].value).to.equal(
-          'john.smith@gmail.com'
-        )
+        const e = err as ValidationError
+        expect(e.errors['contact.email'].name).to.equal('ValidatorError')
+        expect(e.errors['contact.email'].kind).to.equal('unique')
+        expect(e.errors['contact.email'].path).to.equal('contact.email')
+        expect(e.errors['contact.email'].value).to.equal('john.smith@gmail.com')
       }
     })
 
@@ -67,10 +67,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors['contacts.0.email'].name).to.equal('ValidatorError')
-        expect(err.errors['contacts.0.email'].kind).to.equal('unique')
-        expect(err.errors['contacts.0.email'].path).to.equal('email')
-        expect(err.errors['contacts.0.email'].value).to.equal(
+        const e = err as ValidationError
+        expect(e.errors['contacts.0.email'].name).to.equal('ValidatorError')
+        expect(e.errors['contacts.0.email'].kind).to.equal('unique')
+        expect(e.errors['contacts.0.email'].path).to.equal('email')
+        expect(e.errors['contacts.0.email'].value).to.equal(
           'jen.smith@gmail.com'
         )
       }
@@ -102,12 +103,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors['contact.email'].name).to.equal('ValidatorError')
-        expect(err.errors['contact.email'].kind).to.equal('unique')
-        expect(err.errors['contact.email'].path).to.equal('email')
-        expect(err.errors['contact.email'].value).to.equal(
-          'john.smith@gmail.com'
-        )
+        const e = err as ValidationError
+        expect(e.errors['contact.email'].name).to.equal('ValidatorError')
+        expect(e.errors['contact.email'].kind).to.equal('unique')
+        expect(e.errors['contact.email'].path).to.equal('email')
+        expect(e.errors['contact.email'].value).to.equal('john.smith@gmail.com')
       }
     })
 
@@ -124,7 +124,7 @@ export default function (mongoose) {
       doc.contacts = [
         helpers.USERS_NESTED_ARRAY[0].contacts[0],
         helpers.USERS_NESTED_ARRAY[1].contacts[0]
-      ]
+      ] as any
       await doc.save()
     })
   })

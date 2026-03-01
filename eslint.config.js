@@ -2,20 +2,29 @@ import eslint from '@eslint/js'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import { defineConfig } from 'eslint/config'
 import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 export default defineConfig(
   eslint.configs.recommended,
   eslintConfigPrettier,
   {
-    files: ['**/*.spec.js'],
+    files: ['**/*.ts'],
+    extends: [tseslint.configs.recommended],
     languageOptions: {
-      globals: {
-        ...globals.mocha,
-        chai: 'readonly'
-      }
+      parser: tseslint.parser
     },
     rules: {
-      'no-unused-expressions': 'off'
+      '@typescript-eslint/no-explicit-any': 'off'
+    }
+  },
+  {
+    files: ['**/*.spec.ts'],
+    languageOptions: {
+      globals: globals.mocha
+    },
+    rules: {
+      'no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off'
     }
   },
   {

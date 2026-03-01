@@ -1,4 +1,17 @@
-export const USERS = [
+export interface UserFixture {
+  username?: string
+  email?: string
+  password?: string
+  active?: boolean
+}
+
+export interface NestedArrayUserFixture {
+  username: string
+  contacts: Array<{ email: string }>
+  password: string
+}
+
+export const USERS: UserFixture[] = [
   {
     username: 'JohnSmith',
     email: 'john.smith@gmail.com',
@@ -25,7 +38,7 @@ export const USERS = [
   }
 ]
 
-export const USERS_REGEX = [
+export const USERS_REGEX: UserFixture[] = [
   {
     username: 'JohnSmith0',
     email: 'john0smith@gmail.com',
@@ -38,7 +51,7 @@ export const USERS_REGEX = [
   }
 ]
 
-export const USERS_PARTIAL_FILTER_EXPRESSION = [
+export const USERS_PARTIAL_FILTER_EXPRESSION: UserFixture[] = [
   {
     username: 'JaneSmith',
     email: 'jane.smith@gmail.com',
@@ -59,7 +72,7 @@ export const USERS_PARTIAL_FILTER_EXPRESSION = [
   }
 ]
 
-export const USERS_NESTED_ARRAY = [
+export const USERS_NESTED_ARRAY: NestedArrayUserFixture[] = [
   {
     username: 'JenSmith',
     contacts: [{ email: 'jen.smith@gmail.com' }],

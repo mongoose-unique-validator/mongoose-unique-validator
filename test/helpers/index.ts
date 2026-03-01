@@ -4,16 +4,16 @@ import mongoose from 'mongoose'
 export * from './schemas.js'
 export * from './fixtures.js'
 
-export async function afterEachCommon() {
+export async function afterEachCommon(): Promise<void> {
   const collections = Object.keys(mongoose.connection.collections)
-  for (let coll of collections) {
+  for (const coll of collections) {
     try {
       await mongoose.connection.collections[coll].deleteMany({})
     } catch {
       // Collection may not exist
     }
   }
-  mongoose.models = {}
-  mongoose.connection.models = {}
+  ;(mongoose as any).models = {}
+  ;(mongoose.connection as any).models = {}
   uniqueValidator.defaults = {}
 }

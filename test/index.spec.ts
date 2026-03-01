@@ -6,10 +6,8 @@ import mongoose from 'mongoose'
 
 try {
   await mongoose.connect('mongodb://127.0.0.1:27017/mongoose-unique-validator')
-  // eslint-disable-next-line no-undef
   console.log('Connected to the database...')
 } catch (err) {
-  // eslint-disable-next-line no-undef
   console.error(err)
 
   throw err

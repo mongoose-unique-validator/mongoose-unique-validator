@@ -1,8 +1,9 @@
 import uniqueValidator from '../../../index.js'
 import * as helpers from '../../helpers/index.js'
+import type { Mongoose, ValidationError } from '../../types.js'
 import { expect } from 'chai'
 
-export default function (mongoose) {
+export default function (mongoose: Mongoose) {
   describe('Case Insensitive', function () {
     afterEach(helpers.afterEachCommon)
 
@@ -23,10 +24,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
       }
     })
 
@@ -49,10 +51,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
       }
     })
 
@@ -84,16 +87,17 @@ export default function (mongoose) {
       try {
         await User.findOneAndUpdate(
           { email: helpers.USERS[1].email },
-          { email: helpers.USERS[0].email.toUpperCase() },
+          { email: helpers.USERS[0].email!.toUpperCase() },
           { runValidators: true, context: 'query' }
         ).exec()
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
       }
     })
 
@@ -109,16 +113,17 @@ export default function (mongoose) {
       try {
         await User.findOneAndUpdate(
           { email: helpers.USERS[1].email },
-          { $set: { email: helpers.USERS[0].email.toUpperCase() } },
+          { $set: { email: helpers.USERS[0].email!.toUpperCase() } },
           { runValidators: true, context: 'query' }
         ).exec()
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('JOHN.SMITH@GMAIL.COM')
       }
     })
 

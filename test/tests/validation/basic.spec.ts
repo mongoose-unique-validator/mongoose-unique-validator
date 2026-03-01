@@ -1,8 +1,9 @@
 import uniqueValidator from '../../../index.js'
 import * as helpers from '../../helpers/index.js'
+import type { Mongoose, ValidationError } from '../../types.js'
 import { expect } from 'chai'
 
-export default function (mongoose) {
+export default function (mongoose: Mongoose) {
   describe('Basic', function () {
     afterEach(helpers.afterEachCommon)
 
@@ -63,15 +64,16 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.name).to.equal('ValidatorError')
-        expect(err.errors.username.kind).to.equal('unique')
-        expect(err.errors.username.path).to.equal('username')
-        expect(err.errors.username.value).to.equal('JohnSmith')
+        const e = err as ValidationError
+        expect(e.errors.username.name).to.equal('ValidatorError')
+        expect(e.errors.username.kind).to.equal('unique')
+        expect(e.errors.username.path).to.equal('username')
+        expect(e.errors.username.value).to.equal('JohnSmith')
 
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('john.smith@gmail.com')
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('john.smith@gmail.com')
       }
     })
 
@@ -90,10 +92,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.name).to.equal('ValidatorError')
-        expect(err.errors.username.kind).to.equal('unique')
-        expect(err.errors.username.path).to.equal('username')
-        expect(err.errors.username.value).to.equal('JohnSmith')
+        const e = err as ValidationError
+        expect(e.errors.username.name).to.equal('ValidatorError')
+        expect(e.errors.username.kind).to.equal('unique')
+        expect(e.errors.username.path).to.equal('username')
+        expect(e.errors.username.value).to.equal('JohnSmith')
       }
     })
 
@@ -114,10 +117,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('jane.smith@gmail.com')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('jane.smith@gmail.com')
       }
     })
 
@@ -170,10 +174,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('john.smith@gmail.com')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('john.smith@gmail.com')
       }
     })
 
@@ -198,10 +203,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('john.smith@gmail.com')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('john.smith@gmail.com')
       }
     })
 
@@ -221,9 +227,10 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors._id.name).to.equal('ValidatorError')
-        expect(err.errors._id.kind).to.equal('unique')
-        expect(err.errors._id.path).to.equal('_id')
+        const e = err as ValidationError
+        expect(e.errors._id.name).to.equal('ValidatorError')
+        expect(e.errors._id.kind).to.equal('unique')
+        expect(e.errors._id.path).to.equal('_id')
       }
     })
 
@@ -271,10 +278,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.name).to.equal('ValidatorError')
-        expect(err.errors.username.kind).to.equal('unique')
-        expect(err.errors.username.path).to.equal('username')
-        expect(err.errors.username.value).to.equal('JohnSmith')
+        const e = err as ValidationError
+        expect(e.errors.username.name).to.equal('ValidatorError')
+        expect(e.errors.username.kind).to.equal('unique')
+        expect(e.errors.username.path).to.equal('username')
+        expect(e.errors.username.value).to.equal('JohnSmith')
       }
     })
 

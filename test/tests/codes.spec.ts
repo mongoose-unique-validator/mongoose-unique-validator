@@ -1,8 +1,9 @@
 import uniqueValidator from '../../index.js'
 import * as helpers from '../helpers/index.js'
+import type { Mongoose, ValidationError } from '../types.js'
 import { expect } from 'chai'
 
-export default function (mongoose) {
+export default function (mongoose: Mongoose) {
   describe('Codes', function () {
     afterEach(helpers.afterEachCommon)
 
@@ -19,7 +20,8 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.properties.code).to.be.undefined
+        const e = err as ValidationError
+        expect(e.errors.username.properties.code).to.be.undefined
       }
     })
 
@@ -36,8 +38,9 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.properties.code).to.equal(11000)
-        expect(err.errors.email.properties.code).to.equal(11000)
+        const e = err as ValidationError
+        expect(e.errors.username.properties.code).to.equal(11000)
+        expect(e.errors.email.properties.code).to.equal(11000)
       }
     })
 
@@ -56,8 +59,9 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.properties.code).to.equal('DUPLICATE_VALUE')
-        expect(err.errors.email.properties.code).to.equal('DUPLICATE_VALUE')
+        const e = err as ValidationError
+        expect(e.errors.username.properties.code).to.equal('DUPLICATE_VALUE')
+        expect(e.errors.email.properties.code).to.equal('DUPLICATE_VALUE')
       }
     })
 
@@ -76,8 +80,9 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.properties.code).to.equal(11000)
-        expect(err.errors.email.properties.code).to.equal(11000)
+        const e = err as ValidationError
+        expect(e.errors.username.properties.code).to.equal(11000)
+        expect(e.errors.email.properties.code).to.equal(11000)
       }
     })
   })

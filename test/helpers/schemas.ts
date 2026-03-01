@@ -91,10 +91,10 @@ export function createCaseInsensitiveCompoundIndexSchema() {
     }
   })
 
-  schema.index(
-    { username: 1, email: 1 },
-    { unique: true, uniqueCaseInsensitive: true }
-  )
+  schema.index({ username: 1, email: 1 }, {
+    unique: true,
+    uniqueCaseInsensitive: true
+  } as any)
 
   return schema
 }
@@ -173,7 +173,9 @@ export function createArrayOfNestedUserSchema() {
   })
 }
 
-export function createNestedUserSchema(uniqueValidator) {
+export function createNestedUserSchema(
+  uniqueValidator: typeof import('../../index.js').default
+) {
   const ContactSchema = new mongoose.Schema({
     email: {
       type: String,

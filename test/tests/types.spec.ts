@@ -1,8 +1,9 @@
 import uniqueValidator from '../../index.js'
 import * as helpers from '../helpers/index.js'
+import type { Mongoose, ValidationError } from '../types.js'
 import { expect } from 'chai'
 
-export default function (mongoose) {
+export default function (mongoose: Mongoose) {
   describe('Types', function () {
     afterEach(helpers.afterEachCommon)
 
@@ -21,7 +22,8 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.kind).to.equal('unique')
+        const e = err as ValidationError
+        expect(e.errors.username.kind).to.equal('unique')
       }
     })
 
@@ -42,8 +44,9 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.kind).to.equal('mongoose-unique-validator')
-        expect(err.errors.email.kind).to.equal('mongoose-unique-validator')
+        const e = err as ValidationError
+        expect(e.errors.username.kind).to.equal('mongoose-unique-validator')
+        expect(e.errors.email.kind).to.equal('mongoose-unique-validator')
       }
     })
 
@@ -62,7 +65,8 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.kind).to.equal('mongoose-unique-validator')
+        const e = err as ValidationError
+        expect(e.errors.username.kind).to.equal('mongoose-unique-validator')
       }
     })
 
@@ -83,8 +87,9 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.kind).to.equal('mongoose-unique-validator')
-        expect(err.errors.email.kind).to.equal('mongoose-unique-validator')
+        const e = err as ValidationError
+        expect(e.errors.username.kind).to.equal('mongoose-unique-validator')
+        expect(e.errors.email.kind).to.equal('mongoose-unique-validator')
       }
     })
   })

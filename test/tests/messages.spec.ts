@@ -1,8 +1,9 @@
 import uniqueValidator from '../../index.js'
 import * as helpers from '../helpers/index.js'
+import type { Mongoose, ValidationError } from '../types.js'
 import { expect } from 'chai'
 
-export default function (mongoose) {
+export default function (mongoose: Mongoose) {
   describe('Messages', function () {
     afterEach(helpers.afterEachCommon)
 
@@ -20,7 +21,8 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.message).to.equal(
+        const e = err as ValidationError
+        expect(e.errors.username.message).to.equal(
           'Error, expected `username` to be unique. Value: `JohnSmith`'
         )
       }
@@ -42,10 +44,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.message).to.equal(
+        const e = err as ValidationError
+        expect(e.errors.username.message).to.equal(
           'Path: username, value: JohnSmith, type: unique'
         )
-        expect(err.errors.email.message).to.equal(
+        expect(e.errors.email.message).to.equal(
           'Path: email, value: john.smith@gmail.com, type: unique'
         )
       }
@@ -66,7 +69,8 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.message).to.equal(
+        const e = err as ValidationError
+        expect(e.errors.username.message).to.equal(
           'Path: username, value: JohnSmith, type: unique'
         )
       }
@@ -88,10 +92,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.username.message).to.equal(
+        const e = err as ValidationError
+        expect(e.errors.username.message).to.equal(
           'Path: username, value: JohnSmith, type: unique'
         )
-        expect(err.errors.email.message).to.equal(
+        expect(e.errors.email.message).to.equal(
           'Path: email, value: john.smith@gmail.com, type: unique'
         )
       }

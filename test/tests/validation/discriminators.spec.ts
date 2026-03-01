@@ -1,8 +1,9 @@
 import uniqueValidator from '../../../index.js'
 import * as helpers from '../../helpers/index.js'
+import type { Mongoose, ValidationError } from '../../types.js'
 import { expect } from 'chai'
 
-export default function (mongoose) {
+export default function (mongoose: Mongoose) {
   describe('Discriminators and Partial Filter Expressions', function () {
     afterEach(helpers.afterEachCommon)
 
@@ -44,10 +45,11 @@ export default function (mongoose) {
 
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.email.name).to.equal('ValidatorError')
-        expect(err.errors.email.kind).to.equal('unique')
-        expect(err.errors.email.path).to.equal('email')
-        expect(err.errors.email.value).to.equal('jane.smith@gmail.com')
+        const e = err as ValidationError
+        expect(e.errors.email.name).to.equal('ValidatorError')
+        expect(e.errors.email.kind).to.equal('unique')
+        expect(e.errors.email.path).to.equal('email')
+        expect(e.errors.email.value).to.equal('jane.smith@gmail.com')
       }
     })
 
@@ -84,8 +86,9 @@ export default function (mongoose) {
         await new TypeB({ field1: 'foo', field2: 'bar' }).save()
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors.field1.name).to.equal('ValidatorError')
-        expect(err.errors.field1.kind).to.equal('unique')
+        const e = err as ValidationError
+        expect(e.errors.field1.name).to.equal('ValidatorError')
+        expect(e.errors.field1.kind).to.equal('unique')
       }
     })
 
@@ -125,8 +128,8 @@ export default function (mongoose) {
       await new Child({ field: 'y' }).save()
 
       const child = await Child.findOne({})
-      child.field = 'x'
-      await child.save()
+      child!.field = 'x'
+      await child!.save()
     })
 
     it('still throws for embedded subdoc uniqueness violation when parent schema has plugin', async function () {
@@ -147,7 +150,8 @@ export default function (mongoose) {
         await new Parent({ child: { field: 'dupe' } }).save()
         throw new Error('Should have thrown')
       } catch (err) {
-        expect(err.errors['child.field'].kind).to.equal('unique')
+        const e = err as ValidationError
+        expect(e.errors['child.field'].kind).to.equal('unique')
       }
     })
   })
