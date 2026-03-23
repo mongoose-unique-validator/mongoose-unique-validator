@@ -1,4 +1,4 @@
-import type { Schema } from 'mongoose'
+import type { Model, Schema } from 'mongoose'
 
 export interface MongooseUniqueValidatorOptions {
   /** Error type string used in the ValidationError (default: `'unique'`). */
@@ -15,7 +15,24 @@ export interface MongooseUniqueValidatorOptions {
 }
 
 export interface MongooseUniqueValidator {
-  (schema: Schema, options?: MongooseUniqueValidatorOptions): void
+  <
+    DocType,
+    TModelType extends Model<DocType>,
+    TInstanceMethods,
+    TQueryHelpers,
+    TVirtuals,
+    TStaticMethods
+  >(
+    schema: Schema<
+      DocType,
+      TModelType,
+      TInstanceMethods,
+      TQueryHelpers,
+      TVirtuals,
+      TStaticMethods
+    >,
+    options?: MongooseUniqueValidatorOptions
+  ): void
 
   defaults: MongooseUniqueValidatorOptions
 }
