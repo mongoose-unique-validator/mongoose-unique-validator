@@ -43,10 +43,11 @@ This is a single-file Mongoose plugin (`index.js`) with no build step. The packa
 
 **Test layout:**
 
-- `test/index.spec.js` — connects to MongoDB and orchestrates the three suites
-- `test/helpers.js` — shared schema factories and fixture data
-- `test/tests/validation.spec.js` — core uniqueness scenarios
-- `test/tests/types.spec.js` — custom error type option
-- `test/tests/messages.spec.js` — custom error message option
+- `test/index.spec.ts` — connects to MongoDB and orchestrates the four suites
+- `test/helpers/` — shared schema factories (`schemas.ts`), fixture data (`fixtures.ts`) and `afterEachCommon`
+- `test/tests/validation/` — core uniqueness scenarios (basic, nested, case-insensitive, discriminators, queries)
+- `test/tests/types.spec.ts` — custom error type option
+- `test/tests/messages.spec.ts` — custom error message option
+- `test/tests/codes.spec.ts` — custom error code option
 
 Tests require a running MongoDB at `mongodb://127.0.0.1:27017/mongoose-unique-validator`. The database is dropped after the full suite completes; individual tests clean collections in `afterEach` via `helpers.afterEachCommon`.
