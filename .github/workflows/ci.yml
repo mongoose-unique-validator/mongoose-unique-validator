@@ -5,12 +5,18 @@ on:
     branches: ['**']
     paths:
       - '**/*.js'
+      - '**/*.ts'
+      - '.mocharc.yml'
+      - 'tsconfig.json'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - '.github/workflows/ci.yml'
   pull_request:
     paths:
       - '**/*.js'
+      - '**/*.ts'
+      - '.mocharc.yml'
+      - 'tsconfig.json'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - '.github/workflows/ci.yml'
